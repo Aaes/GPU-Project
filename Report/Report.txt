@@ -3,7 +3,7 @@
 
 \title{GPU optimization of base form 820 - collective artificial spouse retirement plan}
 \author{Nikolaj Aaes, Niklas Schalck Johansson and Hildur Uffe Flemberg}
-\date{00-00-0000}
+\date{22-05-2013}
 
 \begin{document}
 	\maketitle
@@ -16,13 +16,15 @@
 	
 	\section{Introduction}
 		- Why is the project relevant, what is the problem at hand \\
-		Scope? \cite{aaaa}
+		Scope? \cite{pmpp}
 		
 	\section{Background}
 		- Related work, projects that precedes this project, why do we use the technology described, what is this new technology
 		
 	\section{The Math}
-		- Description of the insurance math used in the current solution
+		- Description of the insurance math used in the current solution \\
+		Noget med 4th order Runge Kutta \\
+		Bemærk at vi har generelt en antagelse om, at ægtefæller har forskelligt køn.
 		
 	\section{CUDA}
 		- A more elaborate description of GPGPUs, architecture and CUDA C.
@@ -41,9 +43,16 @@
 	\section{Reflection / Discussion / Future improvements}
 		- Did we achieve what we wanted? what did we discover during the project? What can be changed in future implementations?
 		
-	\section{Litterature}
+	\section{Glossary}
+	\begin{itemize}
+		\item Forsikringstager
+		\item Spouse
+		\item livrente
+		\item dødfaldssum
+	\end{itemize}	
+		
 	\begin{thebibliography}{9}
-	\bibitem{aaaa} My first book
+	\bibitem{pmpp} David B. Kirk, Wen-mei W. Hwu - Programming Massively Parallel Proccesors, A Hands-on Approach - Elsevier Inc. - 2010
 	\end{thebibliography}
 	
 \end{document}
