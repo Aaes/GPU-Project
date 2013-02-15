@@ -1,5 +1,3 @@
-/* Hello World program */
-
 #include<stdio.h>
 
 //CONSTANTS
@@ -10,6 +8,7 @@ static double x;		//Alder på beregninstidspunktet (t = 0)
 static double t;		//Beregningstidspunktet
 static double n;		//Ægtefælles alder
 static double h;		//Stepsize
+static double eta = 0; 	//ægtefældes alder
 
 typedef struct {
 	double x;
@@ -21,6 +20,10 @@ double r_(double t);
 double my(double s);
 double k(double tau, double r, double g);
 point RK(point p1, double (*f1)(double s, double fs));
+double gTau(double tau);
+double f2(double n, double fn);
+point level3 (point startPoint);
+point level2 (point startPoint);
 
 int main()
 {
@@ -30,19 +33,35 @@ int main()
 	x = 30.0;
 	t = 0.0;
 	n = 32.0;
-	h = 1.0;
+	h = -0.01;
 
-	point p1 = { 10.0, 1.0 };
-	point p2 = RK(p1, &f1);
+	point p1 = { 1.0, 1.0 };
+	point p2 = level2(p1);
 	printf("p2.x = %f; p2.y = %f", p2.x, p2.y);
+	//point p3 = level2(p2);
+	//printf("\np3.x = %f; p3.y = %f", p3.x, p3.y);
 	
 	return 0;
 
 }
 
-//Inderste model - Runge-Kutta
-point RK(point p1, double (*f)(double s, double fs) ) {
+//Runge-Kutta
+point RK(point p1, double (*f)(double x, double y) ) {
 
+	double k1 = h * f(p1.x, p1.y);
+	
+	double k2 = h * f(p1.x + h/2, p1.y + k1/2);
+	
+	double k3 = h * f(p1.x + h/2, p1.y + k2/2);
+	
+	double k4 = h * f(p1.x + h, p1.y + k3);
+	
+	double y = p1.y + k1/6 + k2/3 + k3/3 + k4/6;
+	
+	point p = {p1.x + h,y};
+	return p;
+	
+	/*
 	//Forskrift for tangenten (step 1)
 	double slope1 = f(p1.x, p1.y);				//Hældning i startpunktet
 	double b0 = p1.y - slope1 * p1.x;			//Finder B i Y = AX + B
@@ -70,14 +89,56 @@ point RK(point p1, double (*f)(double s, double fs) ) {
 
 	point p = { p1.x + h, y };
 	return p;
+	*/
 }
 
-//Inderste model
+point level3 (point startPoint)
+{	
+	point nextPoint = startPoint;
+
+	double s;
+	for(s = 120 - eta; s >= 0; s = s + h)
+	{
+		eta = s;
+		nextPoint = RK(nextPoint, f1);
+	}
+	
+	return nextPoint;
+}
+
+point level2 (point startPoint)
+{
+	point nextPoint = startPoint;
+	
+	double s;
+	for(s = 120; s > 0; s = s + h)
+	{
+		nextPoint = RK(nextPoint, f2);
+	}
+	
+	return nextPoint;
+} 
+
+//Inderste model - funktion
 double f1(double s, double fs) {
 	return r_(t + s) * fs - (s >= k(tau, r, g) ? 1 : 0) - my(s) * (0 - fs);
 }
 
+//Mellemste model - funktion
+double f2(double n, double fn)
+{
+	point p = {n,fn};
+	
+	return -1 * gTau(tau) * fn * level3(p).y; 
+}
+
 //FUNCTIONS
+
+//Function to determine g(tau)
+double gTau(double tau)
+{
+	return 1;
+}
 
 //Function to determine k
 double k(double tau, double r, double g) {
@@ -95,5 +156,5 @@ double r_(double t) {
 //Dødeligheden for en n + s årig t+s år efter
 //den dato dødelighederne tager udgangspunkt i
 double my(double s) {
-	return 20;
+	return 0.5;
 }
