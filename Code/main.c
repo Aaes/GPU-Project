@@ -10,37 +10,46 @@ static double n;		//Ægtefælles alder
 static double h;		//Stepsize
 static double eta = 0; 	//ægtefældes alder
 
+static int counter1 = 0; //test counter, for testing purposes
+static int counter2 = 0; //test counter, for testing purposes
+static int counter3 = 0; //test counter, for testing purposes
+
 typedef struct {
 	double x;
 	double y;
 } point;
 
 double f1(double s, double fs);
+double f2(double n, double fn);
+double f3(double t, double ft);
 double r_(double t);
 double my(double s);
 double k(double tau, double r, double g);
 point RK(point p1, double (*f1)(double s, double fs));
 double gTau(double tau);
-double f2(double n, double fn);
 point level3 (point startPoint);
 point level2 (point startPoint);
+point level1 (point startPoint);
 
 int main()
 {
-	tau = 40.0;
+	tau = 50.0;
 	r = 60.0;
 	g = 10.0;
 	x = 30.0;
 	t = 0.0;
 	n = 32.0;
-	h = -0.01;
+	h = -0.5;
 
 	point p1 = { 1.0, 1.0 };
-	point p2 = level2(p1);
+	point p2 = level1(p1);
 	printf("p2.x = %f; p2.y = %f", p2.x, p2.y);
 	//point p3 = level2(p2);
 	//printf("\np3.x = %f; p3.y = %f", p3.x, p3.y);
-	
+	printf("\nStepsize: %f", h);
+	printf("\nAntal level 1 beregninger: %d", counter1);
+	printf("\nAntal level 2 beregninger: %d", counter2);
+	printf("\nAntal level 3 beregninger: %d", counter3);
 	return 0;
 
 }
@@ -61,7 +70,7 @@ point RK(point p1, double (*f)(double x, double y) ) {
 	point p = {p1.x + h,y};
 	return p;
 	
-	/*
+	/* IKKE RIGTIG KODE
 	//Forskrift for tangenten (step 1)
 	double slope1 = f(p1.x, p1.y);				//Hældning i startpunktet
 	double b0 = p1.y - slope1 * p1.x;			//Finder B i Y = AX + B
@@ -101,6 +110,7 @@ point level3 (point startPoint)
 	{
 		eta = s;
 		nextPoint = RK(nextPoint, f1);
+		counter3++;
 	}
 	
 	return nextPoint;
@@ -110,14 +120,29 @@ point level2 (point startPoint)
 {
 	point nextPoint = startPoint;
 	
-	double s;
-	for(s = 120; s > 0; s = s + h)
+	double n;
+	for(n = 120; n > 0; n = n + h)
 	{
 		nextPoint = RK(nextPoint, f2);
+		counter2++;
 	}
 	
 	return nextPoint;
 } 
+
+point level1 (point startPoint)
+{
+	point nextPoint = startPoint;
+	
+	double t;
+	for(t = 120-x; t > 0; t = t + h)
+	{
+		nextPoint = RK(nextPoint, f3);
+		counter1++;
+	}
+	
+	return nextPoint;
+}
 
 //Inderste model - funktion
 double f1(double s, double fs) {
@@ -130,6 +155,14 @@ double f2(double n, double fn)
 	point p = {n,fn};
 	
 	return -1 * gTau(tau) * fn * level3(p).y; 
+}
+
+//Yderste model - funktion
+double f3(double t, double ft)
+{
+	point p = {t, ft};
+	
+	return r_(t) * ft - my(x + t) * (level2(p).y - ft);
 }
 
 //FUNCTIONS

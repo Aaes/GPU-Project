@@ -1,3 +1,32 @@
 - Description of the insurance math used in the current solution \\
-Noget med 4th order Runge Kutta \\
-Bemærk at vi har generelt en antagelse om, at ægtefæller har forskelligt køn.
+\\
+\\The algorithm in this project is used to determine the lump sum of money the insurance company needs to possess to be able to pay the insurance holder's spouse in the case of his or her death. The payment to the spouse will be in the form of a life interest which are disbursed from the time of death of the insurance holder unless the death occurs before the pension age. In that case the money will be disbursed after a grace period determined by the insurance company at the time the insurance was taken out. 
+\\
+\\ We assume that the spouse of the insurance holder is of the opposite gender. If the insurance holder does not have a spouse at the time of his or her death the insurance is forfeited.
+\\
+\\The algorithm used here is a 4th order Runge-Kutta solution (indsæt reference) where we use a series of constants determined before any calculation begins:
+
+\begin{center}
+\begin{tabular}[t]{|c|c|}
+\multicolumn{2}{c}{Constants}\\\hline
+\textbf{Name}&\textbf{Meaning}\\\hline
+$\tau$&The time of death of the insurance holder\\\hline
+$r$&The pension age\\\hline
+$g$&The grace period\\\hline
+$x$&The age of the insurance holder at calculation time ($t$ = 0)\\\hline
+$t$&The time of calculation\\\hline
+$h$&The Stepsize of the Runge-Kutta solution\\\hline
+\end{tabular}
+\end{center}
+
+Apart from this there is also a constant $k$ which are determined by $\tau, r$ and $g$ in the following manner:
+
+\begin{center}
+	\begin{tabular}[t]{|c|c|}
+		\multicolumn{2}{c}{How $k$ is defined}\\\hline
+		\textbf{If this statement holds}&\textbf{then $k$ equals}\\\hline
+		$\tau < r$&$g$\\\hline
+		$r \leq \tau < r + g$& $r + g - \tau$\\\hline
+		$r + g \leq \tau$&0\\\hline
+	\end{tabular}
+\end{center}
