@@ -1,10 +1,11 @@
-- Description of the insurance math used in the current solution \\
-\\
-\\The algorithm in this project is used to determine the lump sum of money the insurance company needs to possess to be able to pay the insurance holder's spouse in the case of his or her death. The payment to the spouse will be in the form of a life interest which are disbursed from the time of death of the insurance holder unless the death occurs before the pension age. In that case the money will be disbursed after a grace period determined by the insurance company at the time the insurance was taken out. 
+%!TEX root = /Users/Nikolaj/Developer/GPU-Project/Report/Report.tex
+%- Description of the insurance math used in the current solution \\
+
+The algorithm in this project is used to determine the lump sum of money the insurance company needs to possess to be able to pay the insurance holder's spouse in the case of his or her death. The payment to the spouse will be in the form of a life interest which are disbursed from the time of death of the insurance holder unless the death occurs before the pension age. In that case the money will be disbursed after a grace period determined by the insurance company at the time the insurance was taken out. 
 \\
 \\ We assume that the spouse of the insurance holder is of the opposite gender. If the insurance holder does not have a spouse at the time of his or her death the insurance is forfeited.
 \\
-\\The algorithm used here is a 4th order Runge-Kutta solution (indsæt reference) where we use a series of constants determined before any calculation begins:
+\\The algorithm used here is a 4th order Runge-Kutta solution with a fixed stepsize (indsæt reference) where we use a series of constants determined before any calculation begins:
 
 \begin{center}
 \begin{tabular}[t]{|c|c|}
@@ -19,7 +20,7 @@ $h$&The Stepsize of the Runge-Kutta solution\\\hline
 \end{tabular}
 \end{center}
 
-Apart from this there is also a constant $k$ which are determined by $\tau, r$ and $g$ in the following manner:
+$\tau$ is expressed as $x+t$. Apart from this there is also a constant $k$ which are determined by $\tau, r$ and $g$ in the following manner:
 
 \begin{center}
 	\begin{tabular}[t]{|c|c|}
@@ -30,3 +31,53 @@ Apart from this there is also a constant $k$ which are determined by $\tau, r$ a
 		$r + g \leq \tau$&0\\\hline
 	\end{tabular}
 \end{center}
+
+The algorithm can be described as a combination of three models; an outer model that describes the life/death state of the insurance holder, a middle model that describes the married/unmarried state of the insurance holder and an inner model that describes the life/death state of the potential spouse.
+
+NOTE: The description in the three model sections is loosely based on a describtion for Edlund\cite{edlu} and some passages are directly translated from this document.
+
+\subsection{Outer model}
+The outer model is expressed as the following equation:
+\\ \\$\frac{d}{dt} f(t) = r(t) f(t) - \mu_t(x+t) (S_{x+t}^d (t) - f(t))$ \\
+
+Where $S_\tau^d$is the DØDSFALDSSUM that for a $\tau$ year old at the time $t$ is needed to cover the payment from the insurance company, $\mu_t(x+t)$ is the mortality rate for a $(x + t)$ year old and $r(t)$] is the interest rate function. In this project the interest rate function returns the constant 0.05.
+
+The differential equation is solved from $t=120-x$ to $t=0$ with the RANDBETINGELSE $f(120-x)=0$
+
+\subsection{Middle model}
+The middle model is used to calculate $S_{x+t}^d (t)$ and is expressed with the following equation: \\ \\
+$S_\tau^d(t) = \left\{ 
+  \begin{array}{l l}
+    	g_\tau \int	f(\eta|\tau)a_{[\eta] + g}^I(t)d\eta									& \quad \text{$\tau \le r$}\\
+    	g_\tau \int	f(\eta|\tau)a_{[\eta] + r + g - \tau}^I(t)d\eta 			& \quad \text{$r \leq \tau \le r + g$}\\
+			g_\tau \int	f(\eta|\tau)a_{[\eta]}^I(t)d\eta 											& \quad \text{$r +g \leq \tau$}
+  \end{array} \right.$ \\ \\
+
+Where $g_\tau$ is the propability that a $\tau$ year is married and $f(\eta|\tau)$ is SANDSYNLIGHEDSFORDELINGEN FOR that a $\tau$ year old is married to a $\eta$ year provided that the $\tau$ year old is married.
+This equation can be rewritten to this form: \\
+
+$\frac{d}{dn}f(\eta) = -g_\tau f(\eta|\tau)a_{[\eta]+k}^I(t)$ \\
+
+here the DET-DER-TAL-SOM-LIGNER-EN-EKSPONENT-MEN-ER-NEDE-I-STEDET-FOR-OPPE for $a$ is rewritten to $[\eta]+k$ where $k$ can fall into three different categories as shown in THE-TABLE-CONSTANTS. 
+
+This differential equation is solved from $\eta = 120$ to $\eta = 1$ with the RANDBETINGELSE $f(120) = 0$
+
+\subsection{Inner model}
+The inner model is used to calculate $a_{[\eta]+k}^I(t)$ and is expressed with the following equation: \\
+
+$\frac{d}{ds}f(s) = r(t+s)f(s) - 1_{s \geq k} - \mu_{t+s}(\eta + s)(0 - f(s))$ \\
+
+Where $t$, $\eta$ and $k$ are constants and $\mu_{t+s}(\eta + s)$ is the mortality rate for a $(\eta + s)$ year old.
+
+This differential equation is solved from $s = 120 - \eta$ to $s = 0$ with the RANDBETINGELSE $f(120 - \eta) = 0$
+
+\subsection{Runge-Kutta 4th order}
+The Runge-Kutta method is a method for approximating differential equations that builds on Eulers method (INDSÆT REFERENCE) and the midpoint method (INDSÆT REFERENCE). When given a start point and a differential equation one can choose a stepsize and approximate the graph.
+When given a point $(x_n,y_n)$, a differential equation $f$ and a stepsize $h > 0$ one can use the Runge-Kutta method to approximate the next point in the following way: \\
+
+\noindent $k1 = h f(x_n, y_n)$ \\
+$k2 = h f(x_n + \frac{h}{2}, y_n + \frac{k1}{h} )$ \\
+$k3 = h f(x_n + \frac{h}{2}, y_n + \frac{k2}{h} )$ \\
+$k4 = h f(x_n + h, y_n + k3 )$ \\ \\
+$x_n +1 = x_n + h$ \\
+$y_{n + 1} = y_n + \frac{k1}{6} + \frac{k2}{3} + \frac{k3}{3} + \frac{k4}{6} + O(h^5)$ HVORFOR KAN VI IGNORERE $O(h^5)$??

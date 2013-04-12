@@ -21,12 +21,15 @@
 	\input{Introduction}
 		
 	\section{Background}
+	SCOPE: Vi kører kun med een kunde ikke flere
 		
 	\input{Background}
 		
 	\section{The Math}
 		
 	\input{TheMath}
+	
+	BESKRIV HVORDAN EN NORMAL KØRSEL SERUD = EKSEMPEL
 		
 	\section{CUDA}
 
@@ -35,8 +38,12 @@
 	\section{Implementation}
 		
 	\input{Implementation}
+	I den kode der er nu er insurance holder kvinde og spouse mand ALTID
 		
 	\section{Testing}
+	test på forskellige maskiner
+	hvis vi deler steps op i blocks af 32 tråde kan der i worst case scenario være en sidste block med 1 aktiv og 31 inaktive tråde.
+	Lav en graf over rest trådene
 		
 	\input{Testing}
 		
@@ -49,15 +56,26 @@
 	\input{Conclusion}
 	
 	\section{Reflection / Discussion / Future improvements}
+	improvements:
+	det kan optimeres til at kunne køre flere kunder.
+	Simpson løsning i middle?
+	
+	KUNNE DET VÆRE INTERESSANT AT BRUGE DYNAMIC PROGRAMMING?
+	KUNNE MAN GEMME HVILKE KALD TIL INNER DER ER LAVET OG HVIS INNER SÅ KALDES IGEN MED SAMME VÆRDIER, KAN MAN SLIPPE FOR AT REGNE DET UD OG BARE HENTE RESULTATET. DOG SKAL MAN VÆRE OPMÆRKSOM PÅ AT MAN KAN KOMME I EN SITUATION HVOR EN BEREGNING SER AT DER IKKE ER NOGET RESULTAT FOR ET SÆT PARAMETRE OG DERFOR GÅR I GANG MED AT REGNE DET UD, MENS DEN FØRST BEREGNING KØRER KAN ANDRE BEREGNINGER MED SAMME PARAMETRE OG DE NYE BEREGNINGER VIL OGSÅ GERNE GEMME RESULTATET NÅR DE ER FÆRDIGE HVILKET KAN GIVE CONFLICTS (MÅSKE).
+	eller
+	Det kan være vi skal dokumentere en del om at man kan gemme alle resultater i en tabel og efter et vist antal kunder kan man ende med nok til bare at have opslag i stedet for beregninger. skal denne tabel et ligge på GPU så den kan slås op i konstant tid.
 		
 	\input{Reflection}
+	Threats to validity???
+	kan det betale sig at køre dele af programmet på CPU'en?
 		
 	\section{Glossary}
 	
 	\input{Glossary}
 		
 	\begin{thebibliography}{9}
-	\bibitem{pmpp} David B. Kirk, Wen-mei W. Hwu - Programming Massively Parallel Proccesors, A Hands-on Approach - Elsevier Inc. - 2010
+			\bibitem{edlu} EDLUND DOKUMENTET
+			\bibitem{pmpp} David B. Kirk, Wen-mei W. Hwu - Programming Massively Parallel Proccesors, A Hands-on Approach - Elsevier Inc. - 2010
 	\end{thebibliography}
 	
 \end{document}
