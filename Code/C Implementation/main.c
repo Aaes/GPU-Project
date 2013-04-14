@@ -26,7 +26,7 @@ typedef struct {
 	double y;
 } point;
 
-double* Outer();
+point* Outer();
 point OuterRK(double h, point p);
 point Middle(double t);
 point MiddleRK(double h, point p, double eta, double t);
@@ -46,9 +46,9 @@ double f(double eta, double tau);
 int main()
 {
 	//stepsizes
-	h1 = 10.0;
+	h1 = 1.0;
 	h2 = 2.0;
-	h3 = 10.0;
+	h3 = 1.0;
 	
 	//constants
 	g = 31.0;
@@ -57,31 +57,30 @@ int main()
 	
 	level2fullsteps = floor(120 * h2) - h2; //since the fullsteps in the middle model is constant it can be calculated in the main() method
 	
-	double* resultArray = Outer();
+	point* results = Outer();
 	
 	//result prints
-	printf("Result point: %.14f , %.14f \n" , 0.0, resultArray[0]);
+	printf("Result point: %.14f , %.14f \n" , results[0].x, results[0].y);
 	printf("Outer stepsize = %.1f, antal beregninger = %d\n", h1, counter1);
 	printf("Middle stepsize = %.1f, antal beregninger = %d\n", h2, counter2);
 	printf("Inner stepsize = %.1f, antal beregninger = %d\n", h3, counter3);
 	
-	return resultArray[0]; //returns the y-value for the last point. Used for comparison.
+	return results[0].y; //returns the y-value for the last point. Used for comparison.
 }
 
 //the outer model
-double* Outer(){
+point* Outer(){
 	
 	double stepsize = -1 / h1; //since we are taking steps back the stepsize is negative
 	point nextPoint = {120.0-x,0.0}; //set the startpoint
-	
+
 	int fullsteps = floor((120 - x) * h1); //the full amount of steps we need to take in this model
-	
-	double* resultArray = (double*) malloc(fullsteps+1 * sizeof(double)); //initialize the resultArray. We added the +1 to make space for the initialstep
-	
+	point* resultArray = malloc(fullsteps+1 * sizeof(point)); //initialize the resultArray. We added the +1 to make space for the initialstep
+
 	double firstStep = -(fullsteps * stepsize) - (120-x); //since the fullsteps is an int we need to take the remainder as a step first (if one exists)
 		
 	nextPoint = OuterRK(firstStep, nextPoint);
-	resultArray[fullsteps] = nextPoint.y;
+	resultArray[fullsteps] = nextPoint;
 		
 	if(printOuter) printf("Point initial Step (%.10f, %.10f)\n",nextPoint.x, nextPoint.y);
 
@@ -91,7 +90,7 @@ double* Outer(){
 	{
 		if(printOuter) printf("Point %d (%.10f, %.10f)\n",counter1,nextPoint.x, nextPoint.y);
 		nextPoint = OuterRK(stepsize, nextPoint);
-		resultArray[fullsteps-1-s] = nextPoint.y;
+		resultArray[fullsteps-1-s] = nextPoint;
 		counter1++;
 	}
 	
