@@ -1,0 +1,54 @@
+﻿Build started 14-04-2013 16:33:04.
+     1>Project "C:\CUDA\RK4_MiddlePar\RK4\RK4\RK4.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Debug\RK4.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       AddCudaCompileDeps:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\cl.exe /E /nologo /showIncludes /TP /D__CUDACC__ /D_MBCS /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin" /I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" /I. /FIcuda_runtime.h /c C:\CUDA\RK4_MiddlePar\RK4\RK4\kernel.cu 
+       AddCudaCompilePropsDeps:
+       Skipping target "AddCudaCompilePropsDeps" because all output files are up-to-date with respect to the input files.
+       CudaBuild:
+         Compiling CUDA source file kernel.cu...
+         cmd.exe /C "C:\Users\Niklas Schalck\AppData\Local\Temp\f6396798cbf64de5bef91a3faaf4f0bf.cmd"
+         "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -gencode=arch=compute_20,code=\"sm_20,compute_20\" --use-local-env --cl-version 2010 -ccbin "c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"  -G   --keep-dir "Debug" -maxrregcount=0  --machine 32 --compile  -g   -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd  " -o "Debug\kernel.cu.obj" "C:\CUDA\RK4_MiddlePar\RK4\RK4\kernel.cu"
+         
+         C:\CUDA\RK4_MiddlePar\RK4\RK4>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\nvcc.exe" -gencode=arch=compute_20,code=\"sm_20,compute_20\" --use-local-env --cl-version 2010 -ccbin "c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include"  -G   --keep-dir "Debug" -maxrregcount=0  --machine 32 --compile  -g   -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Zi /RTC1 /MDd  " -o "Debug\kernel.cu.obj" "C:\CUDA\RK4_MiddlePar\RK4\RK4\kernel.cu" 
+         kernel.cu
+         tmpxft_00000fc8_00000000-2_kernel.cudafe1.gpu
+         tmpxft_00000fc8_00000000-7_kernel.cudafe2.gpu
+         kernel.cu
+         tmpxft_00000fc8_00000000-2_kernel.cudafe1.cpp
+         tmpxft_00000fc8_00000000-12_kernel.ii
+     1>C:/CUDA/RK4_MiddlePar/RK4/RK4/kernel.cu(66): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>C:/CUDA/RK4_MiddlePar/RK4/RK4/kernel.cu(98): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>C:/CUDA/RK4_MiddlePar/RK4/RK4/kernel.cu(139): warning C4244: 'argument' : conversion from 'double' to 'size_t', possible loss of data
+     1>C:/CUDA/RK4_MiddlePar/RK4/RK4/kernel.cu(148): warning C4244: 'argument' : conversion from 'double' to 'size_t', possible loss of data
+     1>C:/CUDA/RK4_MiddlePar/RK4/RK4/kernel.cu(149): warning C4244: 'argument' : conversion from 'double' to 'size_t', possible loss of data
+     1>C:/CUDA/RK4_MiddlePar/RK4/RK4/kernel.cu(163): warning C4244: 'argument' : conversion from 'double' to 'size_t', possible loss of data
+     1>C:/CUDA/RK4_MiddlePar/RK4/RK4/kernel.cu(168): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+       ManifestResourceCompile:
+         c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"Debug\RK4.exe.embed.manifest.res" Debug\RK4_manifest.rc 
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\CUDA\RK4_MiddlePar\RK4\Debug\RK4.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\lib\Win32" cudart.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\RK4.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\CUDA\RK4_MiddlePar\RK4\Debug\RK4.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\CUDA\RK4_MiddlePar\RK4\Debug\RK4.lib" /MACHINE:X86 Debug\kernel.cu.obj
+         Debug\RK4.exe.embed.manifest.res
+       Manifest:
+         c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\RK4.exe.embed.manifest" /manifest Debug\RK4.exe.intermediate.manifest
+         All outputs are up-to-date.
+       LinkEmbedManifest:
+         All outputs are up-to-date.
+         RK4.vcxproj -> C:\CUDA\RK4_MiddlePar\RK4\Debug\RK4.exe
+       PostBuildEvent:
+         echo copy "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\cudart*.dll" "C:\CUDA\RK4_MiddlePar\RK4\Debug\"
+         copy "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\cudart*.dll" "C:\CUDA\RK4_MiddlePar\RK4\Debug\"
+         :VCEnd
+         copy "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\cudart*.dll" "C:\CUDA\RK4_MiddlePar\RK4\Debug\"
+         C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\cudart32_50_35.dll
+         C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\bin\cudart64_50_35.dll
+                 2 file(s) copied.
+       FinalizeBuildStatus:
+         Deleting file "Debug\RK4.unsuccessfulbuild".
+         Touching "Debug\RK4.lastbuildstate".
+     1>Done Building Project "C:\CUDA\RK4_MiddlePar\RK4\RK4\RK4.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:07.08
