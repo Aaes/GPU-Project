@@ -30,8 +30,10 @@
 	\input{TheMath}
 	
 	BESKRIV HVORDAN EN NORMAL KØRSEL SERUD = EKSEMPEL
+	kig evt på en simpson integration når vi kigger på middle da det egentlig ikke er en differential ligning men et integrale
 		
 	\section{CUDA}
+en tråd skal lave et vist stykke arbejde før det kan betale sig at oprette den. Der er overhead for at lave context for hver tråd så hvis den arbejde tråden laver er mindre end at sætte overheaden op, giver det ingen mening.
 
 	\input{CUDA}
 		
@@ -39,6 +41,7 @@
 		
 	\input{Implementation}
 	I den kode der er nu er insurance holder kvinde og spouse mand ALTID
+	skriv noget om memory bound og compute bound i rapporten
 		
 	\section{Testing}
 	test på forskellige maskiner
@@ -64,6 +67,8 @@
 	KUNNE MAN GEMME HVILKE KALD TIL INNER DER ER LAVET OG HVIS INNER SÅ KALDES IGEN MED SAMME VÆRDIER, KAN MAN SLIPPE FOR AT REGNE DET UD OG BARE HENTE RESULTATET. DOG SKAL MAN VÆRE OPMÆRKSOM PÅ AT MAN KAN KOMME I EN SITUATION HVOR EN BEREGNING SER AT DER IKKE ER NOGET RESULTAT FOR ET SÆT PARAMETRE OG DERFOR GÅR I GANG MED AT REGNE DET UD, MENS DEN FØRST BEREGNING KØRER KAN ANDRE BEREGNINGER MED SAMME PARAMETRE OG DE NYE BEREGNINGER VIL OGSÅ GERNE GEMME RESULTATET NÅR DE ER FÆRDIGE HVILKET KAN GIVE CONFLICTS (MÅSKE).
 	eller
 	Det kan være vi skal dokumentere en del om at man kan gemme alle resultater i en tabel og efter et vist antal kunder kan man ende med nok til bare at have opslag i stedet for beregninger. skal denne tabel et ligge på GPU så den kan slås op i konstant tid.
+		
+		skriv evt noget om autotuning, hvor programmet først tester med forskellige mængder af tråde og blokke og vælger den hurtigste løsning.
 		
 	\input{Reflection}
 	Threats to validity???

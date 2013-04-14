@@ -42,7 +42,7 @@ The outer model is expressed as the following equation:
 
 Where $S_\tau^d$is the DØDSFALDSSUM that for a $\tau$ year old at the time $t$ is needed to cover the payment from the insurance company, $\mu_t(x+t)$ is the mortality rate for a $(x + t)$ year old and $r(t)$] is the interest rate function. In this project the interest rate function returns the constant 0.05.
 
-The differential equation is solved from $t=120-x$ to $t=0$ with the RANDBETINGELSE $f(120-x)=0$
+The differential equation is solved from $t=120-x$ to $t=0$ with the boundary condition $f(120-x)=0$
 
 \subsection{Middle model}
 The middle model is used to calculate $S_{x+t}^d (t)$ and is expressed with the following equation: \\ \\
@@ -53,14 +53,14 @@ $S_\tau^d(t) = \left\{
 			g_\tau \int	f(\eta|\tau)a_{[\eta]}^I(t)d\eta 											& \quad \text{$r +g \leq \tau$}
   \end{array} \right.$ \\ \\
 
-Where $g_\tau$ is the propability that a $\tau$ year is married and $f(\eta|\tau)$ is SANDSYNLIGHEDSFORDELINGEN FOR that a $\tau$ year old is married to a $\eta$ year provided that the $\tau$ year old is married.
+Where $g_\tau$ is the propability that a $\tau$ year is married and $f(\eta|\tau)$ is the probability distribution for, that a $\tau$ year old is married to a $\eta$ year provided that the $\tau$ year old is married.
 This equation can be rewritten to this form: \\
 
 $\frac{d}{dn}f(\eta) = -g_\tau f(\eta|\tau)a_{[\eta]+k}^I(t)$ \\
 
 here the DET-DER-TAL-SOM-LIGNER-EN-EKSPONENT-MEN-ER-NEDE-I-STEDET-FOR-OPPE for $a$ is rewritten to $[\eta]+k$ where $k$ can fall into three different categories as shown in THE-TABLE-CONSTANTS. 
 
-This differential equation is solved from $\eta = 120$ to $\eta = 1$ with the RANDBETINGELSE $f(120) = 0$
+This differential equation is solved from $\eta = 120$ to $\eta = 1$ with the boundary condition $f(120) = 0$
 
 \subsection{Inner model}
 The inner model is used to calculate $a_{[\eta]+k}^I(t)$ and is expressed with the following equation: \\
@@ -69,7 +69,7 @@ $\frac{d}{ds}f(s) = r(t+s)f(s) - 1_{s \geq k} - \mu_{t+s}(\eta + s)(0 - f(s))$ \
 
 Where $t$, $\eta$ and $k$ are constants and $\mu_{t+s}(\eta + s)$ is the mortality rate for a $(\eta + s)$ year old.
 
-This differential equation is solved from $s = 120 - \eta$ to $s = 0$ with the RANDBETINGELSE $f(120 - \eta) = 0$
+This differential equation is solved from $s = 120 - \eta$ to $s = 0$ with the boundary condition $f(120 - \eta) = 0$
 
 \subsection{Runge-Kutta 4th order}
 The Runge-Kutta method is a method for approximating differential equations that builds on Eulers method (INDSÆT REFERENCE) and the midpoint method (INDSÆT REFERENCE). When given a start point and a differential equation one can choose a stepsize and approximate the graph.

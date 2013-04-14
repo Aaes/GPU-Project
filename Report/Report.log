@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  12 APR 2013 18:46
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  14 APR 2013 16:53
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -162,14 +162,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 48--55
  []
 
 
-Overfull \hbox (12.31342pt too wide) in paragraph at lines 56--58
-[]\OT1/cmr/m/n/12 Where $\OML/cmm/m/it/12 g[]$ \OT1/cmr/m/n/12 is the propa-bil
--ity that a $\OML/cmm/m/it/12 ^^\$ \OT1/cmr/m/n/12 year is mar-ried and $\OML/c
-mm/m/it/12 f\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 ^^Q\OMS/cmsy/m/n/12 j\OML/cmm/m/i
-t/12 ^^\\OT1/cmr/m/n/12 )$ is SANDSYN-
- []
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 56--58
 
  []
@@ -210,6 +202,24 @@ Underfull \hbox (badness 10000) in paragraph at lines 78--31
 
 Missing character: There is no Ã in font cmr12!
 Missing character: There is no ˜ in font cmr12!
+Missing character: There is no Ã in font cmr12!
+Missing character: There is no ¥ in font cmr12!
+Missing character: There is no Ã in font cmr12!
+Missing character: There is no ¥ in font cmr12!
+Missing character: There is no Ã in font cmr12!
+Missing character: There is no ¥ in font cmr12!
+Missing character: There is no Ã in font cmr12!
+Missing character: There is no ¥ in font cmr12!
+Missing character: There is no Ã in font cmr12!
+Missing character: There is no ¸ in font cmr12!
+Missing character: There is no Ã in font cmr12!
+Missing character: There is no ¥ in font cmr12!
+Missing character: There is no Ã in font cmr12!
+Missing character: There is no ¥ in font cmr12!
+Missing character: There is no Ã in font cmr12!
+Missing character: There is no ¥ in font cmr12!
+Missing character: There is no Ã in font cmr12!
+Missing character: There is no ¦ in font cmr12!
 (./CUDA.tex) (./Implementation.tex) [4]
 Missing character: There is no Ã in font cmr12!
 Missing character: There is no ¥ in font cmr12!
@@ -264,16 +274,27 @@ Missing character: There is no ¥ in font cmr12!
 Missing character: There is no Ã in font cmr12!
 Missing character: There is no ¥ in font cmr12!
 
-Overfull \hbox (10.03137pt too wide) in paragraph at lines 63--67
+Overfull \hbox (10.03137pt too wide) in paragraph at lines 66--70
 []\OT1/cmr/m/n/12 KUNNE DET VRE IN-TER-ES-SANT AT BRUGE DY-NAMIC PRO-GRAM-
  []
 
 
-Overfull \hbox (20.79672pt too wide) in paragraph at lines 63--67
+Overfull \hbox (20.79672pt too wide) in paragraph at lines 66--70
 \OT1/cmr/m/n/12 AN-DRE BEREG-NINGER MED SAMME PARAME-TRE OG DE NYE BEREG-
  []
 
-[5] (./Reflection.tex)
+[5]
+Missing character: There is no Ã in font cmr12!
+Missing character: There is no ¸ in font cmr12!
+Missing character: There is no Ã in font cmr12!
+Missing character: There is no ¦ in font cmr12!
+Missing character: There is no Ã in font cmr12!
+Missing character: There is no ¥ in font cmr12!
+Missing character: There is no Ã in font cmr12!
+Missing character: There is no ¦ in font cmr12!
+Missing character: There is no Ã in font cmr12!
+Missing character: There is no ¸ in font cmr12!
+ (./Reflection.tex)
 Missing character: There is no Ã in font cmr12!
 Missing character: There is no ¸ in font cmr12!
 Missing character: There is no Ã in font cmr12!
@@ -312,7 +333,7 @@ mr12.pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr
 pfb></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.p
 fb></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb
 >
-Output written on Report.pdf (6 pages, 113344 bytes).
+Output written on Report.pdf (6 pages, 113764 bytes).
 PDF statistics:
  59 PDF objects out of 1000 (max. 8388607)
  41 compressed objects within 1 object stream
