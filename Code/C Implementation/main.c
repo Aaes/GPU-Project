@@ -46,14 +46,14 @@ double f(double eta, double tau);
 int main()
 {
 	//stepsizes
-	h1 = 1.0;
+	h1 = 3.0;
 	h2 = 2.0;
-	h3 = 1.0;
+	h3 = 3.0;
 	
 	//constants
 	g = 31.0;
 	r = 79.0;
-	x = 110;
+	x = 115;
 	
 	level2fullsteps = floor(120 * h2) - h2; //since the fullsteps in the middle model is constant it can be calculated in the main() method
 	
