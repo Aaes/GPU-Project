@@ -1,5 +1,21 @@
-Future work: \\
+%!TEX root = /Users/Nikolaj/Developer/GPU-Project/Report/Report.tex
+This project has a limited scope and we would like to document suggestions for future expansion of the project:
 
-optimize for several customers at a single time \\
+\begin{description}
+	
+\item[Formal verification of correctness of code] \hfill \\
+	We assume that the code produces the correct results because it is modeled after existing code and because our test of INDSÆT KORREKT TAL values are identical to the results produced by the existing code. Our test give a sense of correctness but without formal verification there is always the possibility that a corner case is not covered and will produce incorrect results. \\
 
-Take the interest curve into account
+\item[Optimize for several customers at a single time] \hfill \\
+
+\item[Variable interest curve] \hfill \\
+In this project the interest rate is assumed to be a constant of 5 \%. However in the real world this is not the case. The interest rate i variable over time and the program should be able to take this into account. \\
+
+
+\item[Switch genders at runtime] \hfill \\
+When handling multiple customers in the same execution being able to switch the genders of the insurance holder and spouse at runtime is necessary. This is not a complex extension of the program but it is still something that is not implemented in this project. The difference between using female and male is the function used to calculate their mortality intensities. Changing whether the female or male function should be called for each customer and spouse should be trivial in the C and C\# implementation but might have repercussions in the CUDA C implementation since it can generate branch divergence. \\
+
+\item[Same-gender marriages] \hfill \\
+As an addition to switching gender at runtime the program will be able to emulate the real world better if it supported same-gender marriages. The same considerations are present as the function to calculate mortality intensities is now the same for both the insurance holder and the spouse. Additionally the function used to calculate the probability that the insurance holder is married might be different for same-gender marriages.
+
+\end{description}

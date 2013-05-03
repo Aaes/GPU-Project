@@ -1,23 +1,23 @@
-\contentsline {title}{GPU Optimization of Base Form 820 \unskip \ \ignorespaces * Collective Artificial Spouse Retirement Plan}{1}
+\contentsline {title}{GPU Optimization of Base Form 820 \unskip \ \ignorespaces * Collective Artificial Spouse Retirement Plan}{1}{chapter.1}
 \authcount {1}
-\contentsline {author}{Niklas Schalck Johansson, Nikolaj Aaes and Hildur Flemberg\unskip \ \ignorespaces {\tt \{nsjo, niaa, hufl\}@itu.dk}}{1}
-\contentsline {section}{\numberline {1}Introduction}{3}
-\contentsline {section}{\numberline {2}Background}{3}
-\contentsline {subsection}{\numberline {2.1}Problem definition}{3}
-\contentsline {subsection}{\numberline {2.2}Scope}{3}
-\contentsline {subsection}{\numberline {2.3}Assumptions}{3}
-\contentsline {section}{\numberline {3}The Math}{4}
-\contentsline {subsection}{\numberline {3.1}Outer model}{4}
-\contentsline {subsection}{\numberline {3.2}Middle model}{5}
-\contentsline {subsection}{\numberline {3.3}Inner model}{5}
-\contentsline {subsection}{\numberline {3.4}Runge-Kutta 4th order}{5}
-\contentsline {section}{\numberline {4}Implementation}{6}
-\contentsline {section}{\numberline {5}CUDA}{6}
-\contentsline {subsection}{\numberline {5.1}CUDA Architecture}{6}
-\contentsline {subsection}{\numberline {5.2}Parralellisation}{6}
-\contentsline {section}{\numberline {6}Testing}{8}
-\contentsline {section}{\numberline {7}Benchmarks and Comparison}{8}
-\contentsline {section}{\numberline {8}Reflection / Discussion}{8}
-\contentsline {section}{\numberline {9}Future work}{9}
-\contentsline {section}{\numberline {10}Conclusion}{9}
-\contentsline {section}{\numberline {11}Glossary}{9}
+\contentsline {author}{Niklas Schalck Johansson, Nikolaj Aaes and Hildur Flemberg\unskip \ \ignorespaces {\tt \{nsjo, niaa, hufl\}@itu.dk}}{1}{chapter.1}
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1.1}
+\contentsline {section}{\numberline {2}Background}{4}{section.1.2}
+\contentsline {subsection}{\numberline {2.1}Problem definition}{4}{subsection.1.2.1}
+\contentsline {subsection}{\numberline {2.2}Scope}{4}{subsection.1.2.2}
+\contentsline {subsection}{\numberline {2.3}Assumptions}{4}{subsection.1.2.3}
+\contentsline {section}{\numberline {3}The Math}{4}{section.1.3}
+\contentsline {subsection}{\numberline {3.1}Outer model}{5}{subsection.1.3.1}
+\contentsline {subsection}{\numberline {3.2}Middle model}{5}{subsection.1.3.2}
+\contentsline {subsection}{\numberline {3.3}Inner model}{6}{subsection.1.3.3}
+\contentsline {subsection}{\numberline {3.4}Runge-Kutta 4th order}{6}{subsection.1.3.4}
+\contentsline {section}{\numberline {4}Implementation}{7}{section.1.4}
+\contentsline {section}{\numberline {5}CUDA}{7}{section.1.5}
+\contentsline {subsection}{\numberline {5.1}CUDA Architecture}{7}{subsection.1.5.1}
+\contentsline {subsection}{\numberline {5.2}Parralellisation}{7}{subsection.1.5.2}
+\contentsline {section}{\numberline {6}Testing}{8}{section.1.6}
+\contentsline {section}{\numberline {7}Benchmarks and Comparison}{9}{section.1.7}
+\contentsline {section}{\numberline {8}Reflection / Discussion}{9}{section.1.8}
+\contentsline {section}{\numberline {9}Future work}{9}{section.1.9}
+\contentsline {section}{\numberline {10}Conclusion}{10}{section.1.10}
+\contentsline {section}{\numberline {11}Glossary}{10}{section.1.11}
