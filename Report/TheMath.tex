@@ -79,5 +79,5 @@ When given a point $(x_n,y_n)$, a differential equation $f$ and a stepsize $h > 
 $k2 = h f(x_n + \frac{h}{2}, y_n + \frac{k1}{h} )$ \\
 $k3 = h f(x_n + \frac{h}{2}, y_n + \frac{k2}{h} )$ \\
 $k4 = h f(x_n + h, y_n + k3 )$ \\ \\
-$x_n +1 = x_n + h$ \\
+$x_{n + 1} = x_n + h$ \\
 $y_{n + 1} = y_n + \frac{k1}{6} + \frac{k2}{3} + \frac{k3}{3} + \frac{k4}{6} + O(h^5)$ HVORFOR KAN VI IGNORERE $O(h^5)$??
