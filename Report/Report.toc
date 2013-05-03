@@ -3,8 +3,9 @@
 \contentsline {author}{Niklas Schalck Johansson, Nikolaj Aaes and Hildur Flemberg\unskip \ \ignorespaces {\tt \{nsjo, niaa, hufl\}@itu.dk}}{1}
 \contentsline {section}{\numberline {1}Introduction}{2}
 \contentsline {section}{\numberline {2}Background}{3}
-\contentsline {subsection}{\numberline {2.1}Scope}{3}
-\contentsline {subsection}{\numberline {2.2}Assumptions}{3}
+\contentsline {subsection}{\numberline {2.1}Problem definition}{3}
+\contentsline {subsection}{\numberline {2.2}Scope}{3}
+\contentsline {subsection}{\numberline {2.3}Assumptions}{3}
 \contentsline {section}{\numberline {3}The Math}{3}
 \contentsline {subsection}{\numberline {3.1}Outer model}{4}
 \contentsline {subsection}{\numberline {3.2}Middle model}{4}
@@ -16,6 +17,7 @@
 \contentsline {section}{\numberline {5}Implementation}{7}
 \contentsline {section}{\numberline {6}Testing}{7}
 \contentsline {section}{\numberline {7}Benchmarks and Comparison}{7}
-\contentsline {section}{\numberline {8}Conclusion}{8}
-\contentsline {section}{\numberline {9}Reflection / Discussion / Future improvements}{8}
-\contentsline {section}{\numberline {10}Glossary}{8}
+\contentsline {section}{\numberline {8}Reflection / Discussion}{8}
+\contentsline {section}{\numberline {9}Future work}{8}
+\contentsline {section}{\numberline {10}Conclusion}{8}
+\contentsline {section}{\numberline {11}Glossary}{8}
