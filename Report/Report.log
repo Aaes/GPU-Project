@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  3 MAY 2013 11:05
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  3 MAY 2013 11:10
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -607,18 +607,18 @@ Package footmisc Info: Declaring symbol style lamport*-robust on input line 924
 (./Report.aux)
 \openout1 = `Report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
 \AtBeginShipoutBox=\box68
 
 (/usr/local/texlive/2012/texmf-dist/tex/context/base/supp-pdf.mkii
@@ -678,12 +678,12 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-LaTeX Font Info:    Try loading font information for T1+cmtt on input line 25.
+LaTeX Font Info:    Try loading font information for T1+cmtt on input line 24.
 
 (/usr/local/texlive/2012/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 ) (./Abstract.tex)
-Overfull \hbox (0.20877pt too wide) in paragraph at lines 34--35
+Overfull \hbox (0.20877pt too wide) in paragraph at lines 33--34
 \T1/cmr/bx/n/9 Keywords:\T1/cmr/m/n/9 CUDA, par-al-lelism, threads, blocks, in-
 sur-ance, cap-i-tal, soft-
  []
@@ -762,7 +762,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 75--77
  []
 
 )
-Underfull \hbox (badness 10000) in paragraph at lines 78--53
+Underfull \hbox (badness 10000) in paragraph at lines 78--52
 
  []
 
@@ -806,7 +806,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [5]
 (./Testing.tex) (./BAndC.tex) (./Conclusion.tex)
-Overfull \hbox (1.25958pt too wide) in paragraph at lines 93--97
+Overfull \hbox (1.25958pt too wide) in paragraph at lines 92--96
 []\T1/cmr/m/n/10 KUNNE DET VÆRE IN-TER-ES-SANT AT BRUGE DY-NAMIC PRO-GRAM-
  []
 
@@ -814,7 +814,7 @@ Overfull \hbox (1.25958pt too wide) in paragraph at lines 93--97
 Here is how much of TeX's memory you used:
  5798 strings out of 493488
  77822 string characters out of 3141326
- 174029 words of memory out of 3000000
+ 174025 words of memory out of 3000000
  8975 multiletter control sequences out of 15000+200000
  12104 words of font info for 27 fonts, out of 3000000 for 9000
  957 hyphenation exceptions out of 8191
@@ -835,7 +835,7 @@ ts/type1/public/cm-super/sfbx1440.pfb></usr/local/texlive/2012/texmf-dist/fonts
 /type1/public/cm-super/sfrm0900.pfb></usr/local/texlive/2012/texmf-dist/fonts/t
 ype1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2012/texmf-dist/fonts/typ
 e1/public/cm-super/sftt1000.pfb>
-Output written on Report.pdf (7 pages, 225998 bytes).
+Output written on Report.pdf (7 pages, 227022 bytes).
 PDF statistics:
  85 PDF objects out of 1000 (max. 8388607)
  61 compressed objects within 1 object stream
