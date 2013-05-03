@@ -1,0 +1,21 @@
+\contentsline {title}{GPU Optimization of Base Form 820 \unskip \ \ignorespaces * Collective Artificial Spouse Retirement Plan}{1}
+\authcount {1}
+\contentsline {author}{Niklas Schalck Johansson, Nikolaj Aaes and Hildur Flemberg\unskip \ \ignorespaces {\tt \{nsjo, niaa, hufl\}@itu.dk}}{1}
+\contentsline {section}{\numberline {1}Introduction}{2}
+\contentsline {section}{\numberline {2}Background}{3}
+\contentsline {subsection}{\numberline {2.1}Scope}{3}
+\contentsline {subsection}{\numberline {2.2}Assumptions}{3}
+\contentsline {section}{\numberline {3}The Math}{3}
+\contentsline {subsection}{\numberline {3.1}Outer model}{4}
+\contentsline {subsection}{\numberline {3.2}Middle model}{4}
+\contentsline {subsection}{\numberline {3.3}Inner model}{5}
+\contentsline {subsection}{\numberline {3.4}Runge-Kutta 4th order}{5}
+\contentsline {section}{\numberline {4}CUDA}{5}
+\contentsline {subsection}{\numberline {4.1}CUDA Architecture}{6}
+\contentsline {subsection}{\numberline {4.2}Parralellisation}{6}
+\contentsline {section}{\numberline {5}Implementation}{7}
+\contentsline {section}{\numberline {6}Testing}{7}
+\contentsline {section}{\numberline {7}Benchmarks and Comparison}{7}
+\contentsline {section}{\numberline {8}Conclusion}{8}
+\contentsline {section}{\numberline {9}Reflection / Discussion / Future improvements}{8}
+\contentsline {section}{\numberline {10}Glossary}{8}
