@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  4 MAY 2013 13:12
 =======
 <<<<<<< HEAD
@@ -7,6 +8,9 @@ This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2
 This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2013.2.13)  3 MAY 2013 10:22
 >>>>>>> stuff
 >>>>>>> stuff
+=======
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  4 MAY 2013 13:37
+>>>>>>> added keyword
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1015,6 +1019,7 @@ e/2012/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/local/texlive/
 exmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2012/tex
 mf-dist/fonts/type1/public/cm-super/sftt1000.pfb>
 <<<<<<< HEAD
+<<<<<<< HEAD
 Output written on Report.pdf (11 pages, 260708 bytes).
 =======
 Output written on Report.pdf (11 pages, 260710 bytes).
@@ -1033,6 +1038,9 @@ fb></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb
 Output written on Report.pdf (8 pages, 121816 bytes).
 >>>>>>> stuff
 >>>>>>> stuff
+=======
+Output written on Report.pdf (11 pages, 260721 bytes).
+>>>>>>> added keyword
 PDF statistics:
  244 PDF objects out of 1000 (max. 8388607)
  212 compressed objects within 3 object streams
