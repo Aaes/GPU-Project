@@ -81,3 +81,28 @@ $k3 = h f(x_n + \frac{h}{2}, y_n + \frac{k2}{h} )$ \\
 $k4 = h f(x_n + h, y_n + k3 )$ \\ \\
 $x_{n + 1} = x_n + h$ \\
 $y_{n + 1} = y_n + \frac{k1}{6} + \frac{k2}{3} + \frac{k3}{3} + \frac{k4}{6} + O(h^5)$ HVORFOR KAN VI IGNORERE $O(h^5)$??
+
+\subsection{Description of execution}
+	To provide a better overview of how the math is applied we go through how an execution is performed. Before the execution begins certain value are give before hand, namely $g$, $r$ and $x$. Additionally we need to decide on a stepsize before the execution can begin. \\
+	
+	The first step in the execution is to use the outer model with a starting point. Since the outer model is to be solved for $t=120-x$ to $t=0$ with the boundary condition $f(120-x)=0$ we can use the point $(120-x, 0)$ as our starting point. The next step is to actually solve the outer model equation to calculate the next approximate point. All the components in the outer models differential equation can be computed using normal equations except $S_{x+t}^d (t)$. This component can be calculated using the middle model and when it computed the calculation of the next approximate point is completed. The outer model equation is solved four times for each approximation of the next point corresponding to calculating $k1$, $k2$, $k3$ and $k4$ in the Runge Kutta method. This can be repeated $(120-x) \times stepsize$ times until the approximate point becomes $(0,y)$ which is the final point. \\
+	
+	To calculate the missing component using the middle model we need to establish the value of $k$ for the point. Additionally we are given the value $t$ from the outer model. Like the outer model we need to use the middle model with at starting point. The middle model is to be solved for $\eta = 120$ to $\eta = 1$ with the boundary condition $f(120) = 0$ which means that we can use $(120,0)$ as our starting point. As with the outer model all the components of the differential equation in the middle model can be computed using normal equations except $a_{[\eta]+k}^I(t)$. This can be calculated using the inner model which is the last model in the chain. When the inner model has computed a result the calculation of the next approximate point is completed. As in the previous model the middle model equation is calculated four times corresponding to calculating $k1$, $k2$, $k3$ and $k4$ in the Runge Kutta method. This can be repeated $119 \times stepsize$ times until the approximate point becomes $(0,y)$ which is the final point and the $y$-value of this point is returned to the outer model. \\
+	
+	As the last part of the execution the inner model needs to calculate the last component used by the middle model. The inner model uses the $t$, $k$ and $\eta$ values provided by the middle model. This model uses a starting point in the same way as the other models. This model is to be solved for $s = 120 - \eta$ to $s=0$ with the boundary condition $f(120 - \eta) = 0$ which means we can use the point $(120-\eta,0)$ as a starting point. Contrary to the other two models the inner model equation only contain components that can be computed using normal equations to find the next approximate point. For each approximation of a point the inner model equation is solved four times corresponding to calculating $k1$, $k2$, $k3$ and $k4$ in the Runge Kutta method. This can be repeated $120 - \eta \times stepsize$ times until the approximate point becomes $(0,y)$ which is the final point and the $y$-value of this point is returned to the middle model. \\ 
+	
+	In any execution the outer model equation will be solved \\
+	$(120-x) \times stepsize \times 4$ times,\\
+	the middle model equation will be solved \\
+	$((120-x) \times stepsize) \times (119 \times stepsize \times 4)$ times \\
+	and the inner model equation will be solved \\
+	 $((120-x) \times stepsize \times 4) \times 
+	(\sum\limits_{i=120 \times stepsize}^{stepsize+1} 
+	(
+	(120 - \frac{\eta}{stepsize}) \times stepsize \times 4) + 
+	((120 - \frac{2\eta - 1}{2 \times stepsize})\times stepsize \times 4) +
+	((120 - \frac{2\eta - 1}{2 \times stepsize})\times stepsize \times 4) +
+	(120 - \frac{\eta-1}{stepsize}) \times stepsize \times 4)
+	)$ times.\\
+	
+	For a normal execution with $stepsize=4$, $g=30$, $r=80$ and $x=115$ the outer model equation will be solved 80 times, the middle model equation will be solved 152.320 times and the inner model equation is solved 145.008.640 times.

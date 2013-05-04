@@ -55,7 +55,7 @@ int main()
 	r = 79.0;
 	x = 115;
 	
-	level2fullsteps = floor(120 * h2) - h2; //since the fullsteps in the middle model is constant it can be calculated in the main() method
+	level2fullsteps = floor(119 * h2); //since the fullsteps in the middle model is constant it can be calculated in the main() method
 	
 	point* results = Outer();
 	
