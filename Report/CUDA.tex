@@ -3,33 +3,3 @@
 
 \subsection{CUDA Architecture}
 		
-\subsection{Parralellisation}
-
-De forskellige parallelliserings muligheder:
-- beskriv teorien
-- beskriv hvad vi får ud af det i køretid?
-- beskriv hvorfor vi har/ikke har valgt denne løsning
-- Kan den kombineres med de andre for bedre performance?\\
-
-Outer Par \\
-Da man på forhånd kan beregne alle x værdier outer skal bruge i sin kørsel og alle Middle(x) kald i outerDiff kun skal bruge en x værdi er det muligt at regne alle disse middle kald i parallel og gemme hvert middle kalds resultat i et array. Når man derefter skal gå fra startpunkt til næste punkt kan man betragte Middle(p.x) i $return r_(px) * py - GmFemale(x + px) * (Middle(px).y - py);$ som en udregning der tager konstant tid.\\
-
-Middle Par\\
-Da man på forhånd kan beregne alle x værdier middle skal bruge i sin kørsel og vi ved at hvert step i Middle har udregninger til k1,k2/k3 og k4 i hvert skridt der kun afhænger af x-værdien kan vi regne alle de sæt af k1,k2/k3 og k4 som middle skal bruge i parallel. Derefter kan de lægges sammen som et vægtet gennemsnit i et array og bruger når man vil gå fra et punkt til et nyt. Kaldet $double y = p.y + k1/6 + k2/3 + k3/3 + k4/6;$ kan altså betragtes som konstant. Her udregnes hvert sæt af k1, k2/k3 og k4 dog i en enkelt tråd. Det vil sige at der er een tråd for hvert step.\\
-
-Inner Par\\
-Man har også muligheden for at parallisere middles kald til inner der bruges i udregningen af k1, k2/k3 og k4. Ved at sætte 3 tråde til at udregne de tre værdier kan dette gå tre gange så hurtigt.\\
-
-Kombination af Outer Par og Middle par\\
-Ved en valgt block size b = antal outersteps og en thread per block tpb kan man sætte hver block til at tage sig af en x-værdi i outer, altså tage sig af et enkelt middle kald. Hvis man forestiller sig at middle skal tage ms steps og ms > tpb, vil man først udregne k1, k2/k3 og k4 sæt for de først tpb steps og derefter gå videre til de til næste tpb steps indtil alle steps er udregnet. Det betyder også at der kan være inaktive tråde i den sidste omgang tpb steps og det kan give divergence. Det er muligt at bruge reduction (se cuda bogen) når alle k er blevet regnet ud og man skal lægge p.y til.\\
-
-Kombination af Middle par og Inner par\\
-Ligesom i den ovenstående løsning lader man hver block handle en x-værdi for middle og giv hver block tre tråde hver af disse tråde udregner hver sin k værdi og hver tredje tråd lægger dem sammen.\\
-
-Kombination af alle tre\\
-Som i kombinationen af outer par og middle oar vælger man et antal blokke svarende til antallet af outersteps og en thread per block tpb. Man lader stadig hver blok tage sig af et enkelt kald til Middle med en bestemt x-værdi. Forskellen kommer når man i stedet for at lade hvert tråd udregne et sæt af k1, k2/k3 og k4 værdier sætter man i stedet 3 tråde til at udregne dem i parallel. Dette vil kun have indvirkning hvis block størrelsen er større end det antal steps middle skal udføre. Hvis ikke  bruger man tre gange så mange tråde til at så udregnes først tpb k-værdier, tre gange hurtigere end normal, dernæst de næste tpb k-værdier, stadig tre gange så hurtigt men i stedet for at stoppe ved middlesteps som normal vil man stoppe ved middlesteps*3 da der skal bruges 3 gange så mange k-værdier. Optimalt set skal der altså være middlesteps*3 tråde i hvert block. Ved en vilkårlig stepsize vil det være 120*stepsize*3 tråde. Med en stepsize på 1 eller to giver det hendholdsvis 360 og 720 tråde hvilket stadig er inden for det 1024-tråde limit hver block har. Men allerede ved stepsize 3 giver det 1080 tråde per block hvilket ikke er legalt.\\
-
-Hvad har vi valgt\\
-Vi har valgt Kombination af Outer Par og Middle Par for simpelheden.
-Kombination af alle tre er ikke smart fordi det kun giver optimering når threads per block er middlesteps*3 eller over hvilket ikke er legalt med en stepsize over 2.
-SKRIV NOGET OM HVORFOR VI HAR VALGT KOMBI AF OUTER OG MIDDLE I STEDET FOR MIDDLE OG INNER. HVORFOR ER DET MERE EFFEKTIVIT?
