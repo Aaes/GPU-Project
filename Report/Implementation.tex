@@ -1,9 +1,11 @@
-- A description of the new implementation and design choices
+%!TEX root = /Users/Nikolaj/Developer/GPU-Project/Report/Report.tex
+%Husk at nævne at Middle stepsize er hardcoded til 2.
+%Husk at skrive noget om first step der i princippet ikke er en del af matematikken \\
+%Husk at nævne at vi i Middle har sat k3 = k2;
+%Husk at nævne at det antal steps vi tager kan variere i forhold til matematikken fordi vi tager et "Helt" step hver gang vi laver et firstStep hvor det jo i virkeligheden er en brøkdel af et step. Det gør ikke noget for resultatet, men hvis man tæller steps i programmet vil det ikke give det rigtige antal.
+%	I den kode der er nu er insurance holder kvinde og spouse mand ALTID
 
-Husk at nævne at Middle stepsize er hardcoded til 2.
+After we established the mathematical base we implemented a C solution. Instead of implementing the solution directly into CUDA C we chose to implement a C solution first to crush any bugs that were purely C specific. This also made it easier to debug since CUDA C program are generally harder to debug (INDSÆT REF?). \\
 
-Husk at skrive noget om first step der i princippet ikke er en del af matematikken \\
+The first step was to implement the utility methods used for calculating trivial equation and these were mostly taken directly from the original C\# implementation. The methods in question are \texttt{gTau(double tau)}, \texttt{f(double eta, double tau)}, \texttt{k(double tau, double r, double g)}, \texttt{r\_(double t)}, \texttt{GmFema-\\le(double t)} and \texttt{GmMale(double t)}. These all calculate components in each of the different differential equations.
 
-Husk at nævne at vi i Middle har sat k3 = k2;
-
-Husk at nævne at det antal steps vi tager kan variere i forhold til matematikken fordi vi tager et "Helt" step hver gang vi laver et firstStep hvor det jo i virkeligheden er en brøkdel af et step. Det gør ikke noget for resultatet, men hvis man tæller steps i programmet vil det ikke give det rigtige antal.
