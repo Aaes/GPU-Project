@@ -9,6 +9,13 @@ Compute Unified Device Architecture (CUDA) is a parallel computing model created
 
 No matter what, a task is always executed by initiating some host code. The host can then delegate parts of the task to one or several devices embedded as code blocks in \emph{kernels} which is the CUDA term for a function that is executed on the device.
 
+Missing: 
+- Explanation of initiation proces (copy data to device, execute kernel, copy results back to the host) \\
+- How the computing ressources are split between streaming multiprocessors and divided into blocks, warps and threads. \\
+- Warps execute the same instruction \\
+- Same program - different data (as opposed to normal threads in host code that are programmed separately  - different code different data) \\
+- Princippet om blokke gør at samme implementation kan flyttes mellem devices med forskellige specs og altid udnytte de fulde ressourcer \\
+- Princippet om opdelingen i blokke gør at nogle kan vente på data fetching (latency) og andre blokke kan køre i mellemtiden
 
 
 %Devices can execute kernel functions which is the CUDA term for a function that embeds code to be executed on the device.
