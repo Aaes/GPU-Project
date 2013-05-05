@@ -59,8 +59,6 @@ int main()
 	
 	level2fullsteps = floor(119 * h2); //since the fullsteps in the middle model is constant it can be calculated in the main() method
 	
-	printf("First experiment = %.14f\n" , roundWithString(113.12345678910111213));
-	
 	point* results = Outer();
 	
 	//result prints
@@ -142,8 +140,6 @@ point Middle(double t){
 	double stepsize = -1 / h2; //since we are taking steps back the stepsize is negative
 	point nextPoint = {120.0,0.0}; //set the startpoint
 	
-	double t1 = roundWithString(t);
-	
 	int fullsteps = level2fullsteps; //since the fullsteps in the middle model is constant it can be calculated in the main() method
 	
 	//Solve the differential equation with the Runge-Kutta solver
@@ -152,7 +148,7 @@ point Middle(double t){
 	for(s = 0; s < fullsteps; s++)
 	{
 		if(printMiddle) printf("Middle Point %d (%.10f,%.10f)\n",counter2, nextPoint.x, nextPoint.y);
-		nextPoint = MiddleRK(stepsize, nextPoint, n, t1);
+		nextPoint = MiddleRK(stepsize, nextPoint, n, t);
 		n += stepsize;
 		counter2++;
 	}
