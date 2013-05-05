@@ -3,13 +3,13 @@
 \subsection{Architecture}
 Compute Unified Device Architecture (CUDA) is a parallel computing model created by Nvidia in 2006 based on a superset of the C programming language. In CUDA terminology, the computing system as a whole consists of a host (a traditional CPU) and one or more devices (GPUs) that are specially architectured to perform a massive amount of computations in parallel. Devices can execute kernel functions which is the CUDA term for a function that embeds code to be executed on the device.
 
-Before a kernel execution is started, the host must make sure that all the data needed for the computation is available on the GPU. Conversely, the host is responsible for copying back the result data when the computation is completed. CUDA C exposes functions similar to the well known C functions \emph{malloc} and \emp{free} that allocate and free memory on the device similarly to how it is normally done on the hosting system. Additionally a function exists that performs the actual copying given source and target pointers. When all data is available on the device, the host can trigger the kernel function and start the computation.
+Before a kernel execution is started, the host must make sure that all the data needed for the computation is available on the GPU. Conversely, the host is responsible for copying back the result data when the computation is completed. CUDA C exposes functions similar to the well known C functions \emph{malloc} and \emph{free} that allocate and free memory on the device similarly to how it is normally done on the hosting system. Additionally a function exists that performs the actual copying given source and target pointers. When all data is available on the device, the host can trigger the kernel function and start the computation.
 
-\subsubsection{}
+\subsubsection{Something}
 
-When a device is assigned a kernel, the computing ressources of the device is partitioned into a number of streaming multiprocessors (SMP) that can each maintain a certain number of threads. The threads of an SMP are   commonly known as a thread block. The total collection of blocks is known as a grid. 
+When a device is assigned a kernel, the computing ressources of the device is partitioned into a number of streaming multiprocessors (SMP) that can each maintain a certain number of threads. The threads of an SMP are  commonly known as a thread block. The total collection of blocks is known as a grid. 
 
- CUDA C extends the language with a whole new API with keywords and functions allowing the programmer to specify where a block of code should be executed, where memory should be allocated and so on. Furthermore, one is able to specify how the hardware ressources on the device should be configured to perform optimally while solving a particular problem, i.e. how many threads to use etc.
+CUDA C extends the language with a whole new API with keywords and functions allowing the programmer to specify where a block of code should be executed, where memory should be allocated and so on. Furthermore, one is able to specify how the hardware ressources on the device should be configured to perform optimally while solving a particular problem, i.e. how many threads to use etc.
 
 
 
