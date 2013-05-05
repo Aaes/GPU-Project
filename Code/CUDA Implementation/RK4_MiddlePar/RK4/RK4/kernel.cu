@@ -180,15 +180,14 @@ double OuterDiff(double px, double py)
 
 //the middle model
 __global__ void Middle(double *t, double *kSum){
-	
 	int tid = threadIdx.x + blockIdx.x*blockDim.x; //compute thread id here. Remove comment when done properly
-	double stepsize = -1 / constData[4]; //since we are taking steps back the stepsize is negative
+	//since we are taking steps back the stepsize is negative
+	double stepsize = -1 / constData[4]; //constData[4] refers to the h2 constant
 	//since the fullsteps in the middle model is constant it can be calculated in the main() method
-	const int fullsteps = constData[6]; 
+	const int fullsteps = constData[6]; //constData[6] refers to the level2fullsteps constant
 	if(tid<fullsteps){
-		//printf("tid: %d\n", tid);
-		double gt = *t;
-		double tau = constData[0] + gt;
+		double gt = *t; //de-reference input
+		double tau = constData[0] + gt; //constData[0] refers to the x constant
 		double kk = k(tau);
 		double eta = (120+(tid*stepsize));
 		double k1 = stepsize * MiddleDiff(tau, eta, Inner(eta, gt, kk).y);
@@ -196,7 +195,6 @@ __global__ void Middle(double *t, double *kSum){
 		double k4 = stepsize * MiddleDiff(tau, eta + stepsize, Inner(eta + stepsize, gt, kk).y);
 		kSum[tid] = k1/6+k2/3+k2/3+k4/6;
 	}
-
 }
 
 //The differential equation for the middle model
