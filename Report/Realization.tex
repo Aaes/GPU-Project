@@ -45,8 +45,8 @@ This CUDA implementation access certain constant variables quite a lot when calc
 
 It was also considered to keep \texttt{kSum} in shared memory. Shared memory, like constant memory, is likewise considerably faster than global memory, however it is possible for more than one block to be part of the kernel execution. Shared memory allow tread within the same block to share data, but not between blocks, so shared memory was discarded for this solution, and \texttt{kSum} was kept in global memory.
 
-\subsubsection{NVIDIA Analyzer} \hfill \\
-TODO
+\subsubsection{NVIDIA Analyser} \hfill \\
+TODO: Insert results from analyser, and comment on them
 
 \subsubsection{Implementation shortages} \hfill \\
 \label{label:shortages}
@@ -120,4 +120,8 @@ Just like the MiddlePar implementation this CUDA solution access certain constan
 
 However compared to the MiddlePar solution \texttt{kSum} was now kept in shared memory instead of global memory, which were made possible due to the changes we made to \texttt{Middle(…)}. Writing to this array should now be faster than the previous solution, as we can access the array much faster.
 
-\subsubsection{NVIDIA Analyzer} \hfill \\
+\subsubsection{NVIDIA Analyser} \hfill \\
+TODO: Insert results from analyser, and comment on them
+
+\subsection{Comparison and expected results}
+TODO: Describe the fundamental differences between the two, and argue which one should be the fastest and maybe how much faster.
