@@ -27,7 +27,7 @@ typedef struct {
 } point;
 
 point* Outer();
-point OuterRK(double h, point p);
+point OuterRK(double h, point p1);
 point Middle(double t);
 point MiddleRK(double h, point p, double eta, double t);
 point Inner(double eta, double t, double k);
@@ -102,7 +102,10 @@ point* Outer(){
 }
 
 //the runge-kutta solver for the outer model
-point OuterRK(double h, point p){
+point OuterRK(double h, point p1){
+	
+	point p = p1;
+	p.x = roundWithString(p.x);
 	
 	if(printOuter) printf("	k1 = %f * ",h);
 	double k1 = h * OuterDiff(p.x, p.y);
