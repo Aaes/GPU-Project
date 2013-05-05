@@ -7,9 +7,10 @@ The algorithm in this project is used to determine the lump sum of money the ins
 \\
 \\The algorithm used here is a 4th order Runge-Kutta solution with a fixed stepsize (indsæt reference) where we use a series of constants determined before any calculation begins:
 
+\begin{table}
 \begin{center}
 \begin{tabular}[t]{|c|c|}
-\multicolumn{2}{c}{Constants}\\\hline
+	\hline
 \textbf{Name}&\textbf{Meaning}\\\hline
 $\tau$&The time of death of the insurance holder\\\hline
 $r$&The pension age\\\hline
@@ -19,18 +20,24 @@ $t$&The time of calculation\\\hline
 $h$&The Stepsize of the Runge-Kutta solution\\\hline
 \end{tabular}
 \end{center}
+\caption{Constants}
+\label{table:constants}
+\end{table}
 
 $\tau$ is expressed as $x+t$. Apart from this there is also a constant $k$ which are determined by $\tau, r$ and $g$ in the following manner:
 
+\begin{table}
 \begin{center}
 	\begin{tabular}[t]{|c|c|}
-		\multicolumn{2}{c}{How $k$ is defined}\\\hline
+		\hline
 		\textbf{If this statement holds}&\textbf{then $k$ equals}\\\hline
 		$\tau < r$&$g$\\\hline
 		$r \leq \tau < r + g$& $r + g - \tau$\\\hline
 		$r + g \leq \tau$&0\\\hline
 	\end{tabular}
 \end{center}
+\caption{How $k$ is defined}
+\end{table}
 
 The algorithm can be described as a combination of three models; an outer model that describes the life/death state of the insurance holder, a middle model that describes the married/unmarried state of the insurance holder and an inner model that describes the life/death state of the potential spouse.
 
@@ -58,7 +65,7 @@ This equation can be rewritten to this form: \\
 
 $\frac{d}{dn}f(\eta) = -g_\tau f(\eta|\tau)a_{[\eta]+k}^I(t)$ \\
 
-here the subscript for $a$ is rewritten to $[\eta]+k$ where $k$ can fall into three different categories as shown in THE-TABLE-CONSTANTS. 
+here the subscript for $a$ is rewritten to $[\eta]+k$ where $k$ can fall into three different categories as shown in table \ref{table:constants}. 
 
 This differential equation is solved from $\eta = 120$ to $\eta = 1$ with the boundary condition $f(120) = 0$
 
@@ -80,7 +87,7 @@ $k2 = h f(x_n + \frac{h}{2}, y_n + \frac{k1}{h} )$ \\
 $k3 = h f(x_n + \frac{h}{2}, y_n + \frac{k2}{h} )$ \\
 $k4 = h f(x_n + h, y_n + k3 )$ \\ \\
 $x_{n + 1} = x_n + h$ \\
-$y_{n + 1} = y_n + \frac{k1}{6} + \frac{k2}{3} + \frac{k3}{3} + \frac{k4}{6} + O(h^5)$ HVORFOR KAN VI IGNORERE $O(h^5)$??
+$y_{n + 1} = y_n + \frac{k1}{6} + \frac{k2}{3} + \frac{k3}{3} + \frac{k4}{6} + O(h^5)$ (HVORFOR KAN VI IGNORERE $O(h^5)$??)
 
 \subsection{Description of execution}
 	To provide a better overview of how the math is applied we go through how an execution is performed. Before the execution begins certain value are give before hand, namely $g$, $r$ and $x$. Additionally we need to decide on a stepsize before the execution can begin. \\

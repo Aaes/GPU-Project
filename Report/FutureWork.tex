@@ -16,9 +16,9 @@ In this project the interest rate is assumed to be a constant of 5 \%. However i
 When handling multiple customers in the same execution being able to switch the genders of the insurance holder and spouse at runtime is necessary. This is not a complex extension of the program but it is still something that is not implemented in this project. The difference between using female and male is the function used to calculate their mortality intensities. Changing whether the female or male function should be called for each customer and spouse should be trivial in the C and C\# implementation but might have repercussions in the CUDA C implementation since it can generate branch divergence. \\
 
 \item[Same-gender marriages] \hfill \\
-As an addition to switching gender at runtime the program will be able to emulate the real world better if it supported same-gender marriages. The same considerations are present as the function to calculate mortality intensities is now the same for both the insurance holder and the spouse. Additionally the function used to calculate the probability that the insurance holder is married might be different for same-gender marriages.
+As an addition to switching gender at runtime the program will be able to emulate the real world better if it supported same-gender marriages. The same considerations are present as the function to calculate mortality intensities is now the same for both the insurance holder and the spouse. Additionally the function used to calculate the probability that the insurance holder is married might be different for same-gender marriages. \\
 
 \item[Upper bound on threads per block] \hfill \\
-Check whether you try to set the threads per block higher than what a single SMP can actually contain and run.
+TODO: Check whether you try to set the threads per block higher than what a single SMP can actually contain and run.
 
 \end{description}
