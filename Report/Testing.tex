@@ -1,10 +1,16 @@
 %!TEX root = /Users/Nikolaj/Developer/GPU-Project/Report/Report.tex
-To ensure that the program produced the desired result we chose to run a series of executions with the C\# implementation and our CUDA implementation and compare the results. We ran INDSÆT TAL HER test and INDSÆT TAL HER of them was successful in producing identical results. INDSÆT TAL HER was not. 
+To make sure that the C#, C and CUDA programs produce similar results up to an acceptable (and adjustable) treshold, we run each program on a large data set and compare the outputs. Each of the 3 programs take 4 command line arguments which is (1) \emp{g} - the number of years from the policyholder dies until the first rate is disbursed, (2) \emph{r} -  age of retirement, (3) \emp{x} age at runtime and (4) \emph{stepsize} - the number of steps to take each year when the outer and the inner models are solved. Each program outputs a single number which is  -- roflcopter --. 
 
-The test were conducted on INDSÆT TAL HER machines with the following specifications:
+We want all input from the test data set to fall within intervals that are chosen realistically and individually for each command line argument. It makes little sense to test the 3 programs with a retirement age of 200 since few people experience to become that old. Likewise, a big stepsize will make the overall test take very long time to complete which is impractical when testing during development. To avoid these problems, we made a program that generates test data in the shape of a plain text file. Each row in the file contains a comma separated list of numbers representing the 4 command line arguments to be fed to each of the 3 programs.
+
+Next, we need a program that reads the lines of the test data file one by one, invokes the 3 programs in sequence and writes the corresponding results to a line in a new file. Obviously, this could be done by a single program as just described, but we wish to be able to test the C#, C and CUDA programs separately during development without having to wait for the other 2 to finish, which might take longer time than the single program we want to test. For that reason, we make a test program for each of the 3 programs that reads a line from the test data file, invokes the program and appends the result to a text file that is private to the program being tested. 
+
+Finally, we have 3 text files with the results from each test run. We can then import the contents of each file into a column in a spread sheet and have the sheet compare the numbers on each row to identify matching and differing results.
+
+The test scenario describe dabove was conducted on 3 machine with the following hardware specifications
 
 \begin{center}
-\begin{tabular}{|c|c|c|} 
+\begin{tabular}{|c|c|c|}
 	\hline
 	\multicolumn{1}{|m{2.8cm}|}{\centering \textbf{Machine}} & The Malamanteau server & MacBook pro, Retina Mid 2012 \\ \hline
 	\multicolumn{1}{|m{2.8cm}|}{\centering \textbf{OS}} & Windows 7 Pro 64-bit & OS X 10.8.3 (12D78)\\ \hline
