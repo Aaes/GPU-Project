@@ -118,30 +118,30 @@ Just like the MiddlePar implementation this CUDA solution access certain constan
 However compared to the MiddlePar solution \texttt{kSum} was now kept in shared memory instead of global memory, which were made possible due to the changes we made to \texttt{Middle(…)}. Writing to this array should now be faster than the previous solution, as we can access the array much faster.
 
 \subsection{Profiling and comparison}
-\subsubsection{NVidia visual profiler result}
+\subsubsection{Nvidia visual profiler result} \hfill \\
 
-The following results were gathered using NVidias Visual Profiler for analyzing both the MiddlePar and OuterPar CUDA implementation. First we will present the results and then we will discuss them in the next section.
+The following results were gathered using Nvidias Visual Profiler for analyzing both the MiddlePar and OuterPar CUDA implementation. First we will present the results and then we will discuss them in the next section.
 
 \begin{table}
 \begin{center}
-\begin{tabular}[t]{|c|c|}
+\begin{tabular}[t]{|c|c|c|}
 	\hline
 \textbf{Attributes} & \textbf{MiddlePar} & \textbf{OuterPar} \\\hline
-%Grid size & 1 & 1803\\\hline
-%Block size&128,1,1&128,1,1\\\hline
-%Registers/thread&62&63\\\hline
-%Shared Memory/Block&0 bytes&1859 kb\\\hline
-%Global Load Efficiency&90,2\%&777.1\%\\\hline
-%Global Store Efficiency&99,2\%&25\%\\\hline
-%Branch Divergence Overhead&22.3\%& 22.1\%\\\hline
-%Occupancy(Theoretical = 33.3\%)&10.5\%&33.1\%\\\hline
+Grid size & 1,1,1 & 1803,1,1\\\hline
+Block size&128,1,1&128,1,1\\\hline
+Registers/thread&62&63\\\hline
+Shared Memory/Block&0 bytes&1859 kb\\\hline
+Global Load Efficiency&90,2\%&777.1\%\\\hline
+Global Store Efficiency&99,2\%&25\%\\\hline
+Branch Divergence Overhead&22.3\%& 22.1\%\\\hline
+Occupancy(Theoretical = 33.3\%)&10.5\%&33.1\%\\\hline
 \end{tabular}
 \end{center}
-\caption{NVidia Profiler}
+\caption{Nvidia Profiler}
 \label{table:profiler}
 \end{table}
 
-\subsubsection{Comparison and discussion}
-TODO: Discuss the profiling results
-TODO: Update: Include the ideas noted down during discussion with HHB
+\subsubsection{Comparison and discussion} \hfill \\
+TODO: Discuss the profiling results\\
+TODO: Update: Include the ideas noted down during discussion with HHB\\
 TODO: Describe which solution should be the fastest and argue why (Base argument on GPU architecture and results from profiler)
