@@ -45,9 +45,6 @@ This CUDA implementation access certain constant variables quite a lot when calc
 
 It was also considered to keep \texttt{kSum} in shared memory. Shared memory, like constant memory, is likewise considerably faster than global memory, however it is possible for more than one block to be part of the kernel execution. Shared memory allow tread within the same block to share data, but not between blocks, so shared memory was discarded for this solution, and \texttt{kSum} was kept in global memory.
 
-\subsubsection{NVIDIA Analyser} \hfill \\
-TODO: Insert results from analyser, and comment on them
-
 \subsubsection{Implementation shortages} \hfill \\
 \label{label:shortages}
 The solution described above have a few drawbacks. First of all, each time a call to \texttt{Middle(...)} are made, a new GPU context would be set up, variables would be copied to the GPU, and a new kernel would be started. Doing this for a low $x$-value, and a high stepsize, would result create a large amount of kernels. Second, this solution need more than one block to parallelize \texttt{Middle(..)} if the amount of threads per block were low. Even though it would speed up the call to \texttt{Middle(...)}, it does not speed it up the amount of total calls made to \texttt{Middle(...)}. Third, we are not using a lot of threads or blocks to actually make the calculations, compared to how many threads and blocks are available on modern GPUs. Fourth, it would be much more efficient to use shared memory for storing the \texttt{kSum} array, instead of keeping it in global memory.\\
@@ -120,8 +117,31 @@ Just like the MiddlePar implementation this CUDA solution access certain constan
 
 However compared to the MiddlePar solution \texttt{kSum} was now kept in shared memory instead of global memory, which were made possible due to the changes we made to \texttt{Middle(…)}. Writing to this array should now be faster than the previous solution, as we can access the array much faster.
 
-\subsubsection{NVIDIA Analyser} \hfill \\
-TODO: Insert results from analyser, and comment on them
+\subsection{Profiling and comparison}
+\subsubsection{NVidia visual profiler result}
 
-\subsection{Comparison and expected results}
-TODO: Describe the fundamental differences between the two, and argue which one should be the fastest and maybe how much faster.
+The following results were gathered using NVidias Visual Profiler for analyzing both the MiddlePar and OuterPar CUDA implementation. First we will present the results and then we will discuss them in the next section.
+
+\begin{table}
+\begin{center}
+\begin{tabular}[t]{|c|c|}
+	\hline
+\textbf{Attributes} & \textbf{MiddlePar} & \textbf{OuterPar} \\\hline
+%Grid size & 1 & 1803\\\hline
+%Block size&128,1,1&128,1,1\\\hline
+%Registers/thread&62&63\\\hline
+%Shared Memory/Block&0 bytes&1859 kb\\\hline
+%Global Load Efficiency&90,2\%&777.1\%\\\hline
+%Global Store Efficiency&99,2\%&25\%\\\hline
+%Branch Divergence Overhead&22.3\%& 22.1\%\\\hline
+%Occupancy(Theoretical = 33.3\%)&10.5\%&33.1\%\\\hline
+\end{tabular}
+\end{center}
+\caption{NVidia Profiler}
+\label{table:profiler}
+\end{table}
+
+\subsubsection{Comparison and discussion}
+TODO: Discuss the profiling results
+TODO: Update: Include the ideas noted down during discussion with HHB
+TODO: Describe which solution should be the fastest and argue why (Base argument on GPU architecture and results from profiler)
