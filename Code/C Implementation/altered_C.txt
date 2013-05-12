@@ -1,0 +1,282 @@
+#define _USE_MATH_DEFINES
+//#include <cmath>
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdarg.h>
+#include<math.h>
+#include<float.h>
+
+//CONSTANTS
+static double r;		//retirement age
+static double g;		//Years form the insurance holders death to when the payment starts
+static double x;		//Age at the time of calculation (t = 0)
+static double h1;		//Stepsize on level 1 (steps per year)
+static double h2;		//Stepsize on level 2 (steps per year)
+static double h3;		//Stepsize on level 3 (steps per year)
+
+static double level2fullsteps; //since the fullsteps in the middle model is constant it can be calculated in the main() method
+
+static int counter1 = 0; //test counter, for testing purposes
+static int counter2 = 0; //test counter, for testing purposes
+static int counter3 = 0; //test counter, for testing purposes
+
+typedef struct {
+	double x;
+	double y;
+} point;
+
+point Outer();
+point OuterRK(double x, double y, double h);
+point Middle(double t);
+point MiddleRK(double h, point p, double eta, double t);
+point Inner(double eta, double t, double k);
+point InnerRK(double h, point p, double eta, double t, double k);
+double InnerDiff(double t, double s, double fs, double k, double eta);
+double MiddleDiff(double tau, double eat, double InnerY);
+double OuterDiff(double px, double py);
+double r_(double t);
+double k(double tau, double r, double g);
+double gTau(double tau);
+double GmFemale(double t);
+double GmMale(double t);
+double Parabel(double t);
+double f(double eta, double tau);
+
+int main(int argc, char *argv[])
+{	
+	//g = strtod(argv[1], NULL);
+	//r = strtod(argv[2], NULL);
+	//x = strtod(argv[3], NULL);
+	//h1 = strtod(argv[4], NULL);
+	//h2 = 2.0;
+	//h3 = strtod(argv[4], NULL);
+
+	printf("C\n");
+
+  //Test data
+  	//stepsizes
+  	h1 = 10.0;
+  	h2 = 2.0;
+  	h3 = 10.0;
+  	
+  	//constants
+  	g = 10.0;
+  	r = 65.0;
+  	x = 35.0;
+
+	level2fullsteps = floor(120 * h2) - h2; //since the fullsteps in the middle model is constant it can be calculated in the main() method
+	
+	point resultPoint = Outer();
+	
+	// //result prints
+	// printf("Result point: %.14f , %.14f \n" , resultPoint.x, resultPoint.y);
+	// printf("Outer stepsize = %.1f, antal beregninger = %d\n", h1, counter1);
+	// printf("Middle stepsize = %.1f, antal beregninger = %d\n", h2, counter2);
+	// printf("Inner stepsize = %.1f, antal beregninger = %d\n", h3, counter3);
+	
+	printf("%.14f, %.14f\n", resultPoint.x, resultPoint.y); //returns the y-value for the last point. Used for comparison.
+	return 0;
+}
+
+//the outer model
+point Outer(){
+	
+	double stepsize = -1.0 / h1; //since we are taking steps back the stepsize is negative
+	point nextPoint = {120.0-x,0.0}; //set the startpoint
+	
+	int fullsteps = floor((120 - x) * h1); //the full amount of steps we need to take in this model
+	
+	//printf("Point initial Step (%.10f, %.10f)\n",nextPoint.x, nextPoint.y);
+	
+	//double t = 120 - x;
+
+	//Solve the differential equation with the Runge-Kutta solver
+	int s; //fullstep counter
+	for(s = 0; s < fullsteps; s++)
+	{
+		nextPoint = OuterRK((120-x) - s*(1.0/h1), nextPoint.y, stepsize);
+		counter1++;
+	}
+
+	//while(s<steps)
+	
+	return nextPoint;
+}
+
+//the runge-kutta solver for the outer model
+point OuterRK(double x, double y, double h){
+ 
+ double k1 = h * OuterDiff(x, y);
+
+ double k2 = h * OuterDiff(x + h/2.0, y + k1/2);
+
+ double k3 = h * OuterDiff(x + h/2.0, y + k2/2);
+ 
+ double k4 = h * OuterDiff(x + h, y + k3);
+ 
+ double newy = y + k1/6 + k2/3 + k3/3 + k4/6;
+ 
+ point resultPoint = {x + h,newy};
+ return resultPoint;
+}
+
+//The differential equation for the outer model
+double OuterDiff(double px, double py)
+{
+	return r_(px) * py - GmFemale(x + px) * (Middle(px).y - py);
+}
+
+//the middle model
+point Middle(double t){
+	
+	double stepsize = -1 / h2; //since we are taking steps back the stepsize is negative
+	point nextPoint = {120.0,0.0}; //set the startpoint
+	
+	int fullsteps = level2fullsteps; //since the fullsteps in the middle model is constant it can be calculated in the main() method
+	
+	//if(t < 0.1){
+	//	if(t != 0.0){
+	//		printf("\n t is not zero: %.14f \n",t);
+	//	}
+	//	else{
+	//		printf("\n t is zero: %.14f \n",t);
+	//	}
+	//}
+	//printf("%.18f\n",t);
+	//Solve the differential equation with the Runge-Kutta solver
+	int s; //fullstep counter
+	double n = 120; // eta
+	for(s = 0; s < fullsteps; s++)
+	{
+		nextPoint = MiddleRK(stepsize, nextPoint, n, t);
+		n += stepsize;
+		counter2++;
+	}
+	
+	//printf("middle(%.14f) = %.14f\n", t, nextPoint.y);
+	return nextPoint;
+}
+
+//the runge-kutta solver for the middle model
+point MiddleRK(double h, point p, double eta, double t){
+	
+	double tau = x + t;
+	
+	double kk = k(tau,r,g);
+
+	double k1 = h * MiddleDiff(tau, eta, Inner(eta, t, kk).y);		
+	
+	double k2 = h * MiddleDiff(tau, eta + h/2, Inner(eta + h/2, t, kk).y);		
+	
+	double k3 = h * MiddleDiff(tau, eta + h/2, Inner(eta + h/2, t, kk).y);
+	
+	double k4 = h * MiddleDiff(tau, eta + h, Inner(eta + h, t, kk).y);
+	
+	double y = p.y + k1/6 + k2/3 + k3/3 + k4/6;
+	
+	point resultPoint = {p.x + h,y};
+	return resultPoint;
+}
+
+//The differential equation for the middle model
+double MiddleDiff(double tau, double eta, double innerY)
+{
+	return -1 * gTau(tau) * f(eta,tau) * innerY;
+}
+
+//the inner model
+point Inner(double eta, double t, double k){
+	
+	double stepsize = -1 / h3; //since we are taking steps back the stepsize is negative
+	point nextPoint = {120-eta, 0}; //set the startpoint
+	
+	int fullsteps = floor((120 - eta) * h3); //the full amount of steps we need to take in this model
+
+	double firstStep = -(fullsteps * stepsize) - (120-eta); //since the fullsteps is an int we need to take the remainder as a step first (if one exists)
+	nextPoint = InnerRK(firstStep, nextPoint, eta, t, k);
+
+	//Solve the differential equation with the Runge-Kutta solver
+	int s; //fullstep counter
+	for(s = 0; s < fullsteps; s++)
+	{
+		nextPoint = InnerRK(stepsize, nextPoint, eta, t, k);
+		counter3++;
+	}
+
+	return nextPoint;
+}
+
+//the runge-kutta solver for the inner model
+point InnerRK(double h, point p, double eta, double t, double k){
+	
+	double k1 = h * InnerDiff(t, p.x, p.y, k, eta);
+	
+	double k2 = h * InnerDiff(t, (p.x + h/2), (p.y + k1/2), k, eta);		
+	
+	double k3 = h * InnerDiff(t, (p.x + h/2), (p.y + k2/2), k, eta);
+	
+	double k4 = h * InnerDiff(t, (p.x + h), (p.y + k3), k, eta);	
+	
+	double y = p.y + k1/6 + k2/3 + k3/3 + k4/6;
+	
+	point resultPoint = {p.x + h,y};
+	return resultPoint;
+}
+
+//The differential equation for the inner model
+double InnerDiff(double t, double s, double fs, double k, double eta)
+{
+	return r_(t + s) * fs - (s >= k ? 1 : 0) - GmMale(eta + s) * (0 - fs);
+}
+
+//FUNCTIONS
+//helper function to gTau. Taken from collectiveHelp.txt
+double Parabel(double t){
+	return fmax((15.0 - t) * (t - 120.0), 0.0);
+}
+
+//Function to determine g(tau)
+double gTau(double tau)
+{
+	//taken from collectiveHelp.txt
+	double marriageProbabilityPeak = 0.9;
+	double scalefactor = Parabel(67.5) / marriageProbabilityPeak;
+	
+	return Parabel(tau) / scalefactor;
+}
+
+//Function to determine f(eta,tau)
+double f(double eta, double tau){
+	//taken from collectiveHelp.txt
+	double sigma = 3.0;
+    double preFactorInNormalDensity = 1.0 / (sqrt(2.0 * M_PI) * sigma);
+    double factorInExponent = 1.0 / (2.0 * sigma * sigma);
+
+	return 
+      (eta <= 0.0 || eta >= 120.0) 
+      ? 0.0
+      : preFactorInNormalDensity * exp(-1.0 * (tau - eta) * (tau - eta) * factorInExponent);
+}
+
+//Function to determine k
+double k(double tau, double r, double g) {
+	if(tau < r) return g;
+	if(r <= tau && tau < r + g) return (r + g - tau);
+	if(r + g <= tau) return 0.0;
+	return 0.0;
+}
+
+//R function - interest rate
+double r_(double t) {
+	return 0.05;
+}
+
+// Gompertz-Makeham mortality intensities for Danish women
+double GmFemale(double t) {
+    return 0.0005 + pow(10, 5.728 - 10 + 0.038*(t));
+}
+
+// Gompertz-Makeham mortality intensities for Danish men
+double GmMale(double t) {
+    return 0.0005 + pow(10, 5.880 - 10 + 0.038*(t));
+}
