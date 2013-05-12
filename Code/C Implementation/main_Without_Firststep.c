@@ -48,13 +48,13 @@ int main()
 	setbuf(stdout, NULL); //disable buffering for stdout
 	
 	//stepsizes
-	h1 = 3.0;
-	h2 = 2.0;
-	h3 = 3.0;
+	h1 = 4.0;
+	h2 = 4.0;
+	h3 = 4.0;
 	
 	//constants
-	g = 31.0;
-	r = 79.0;
+	g = 30.0;
+	r = 80.0;
 	x = 115;
 	
 	level2fullsteps = floor(119 * h2); //since the fullsteps in the middle model is constant it can be calculated in the main() method
@@ -90,7 +90,6 @@ point* Outer(){
 		if(printOuter) printf("Point %d (%.10f, %.10f)\n",counter1,nextPoint.x, nextPoint.y);
 		nextPoint = OuterRK(stepsize, nextPoint);
 		resultArray[fullsteps-1-s] = nextPoint;
-		counter1++;
 	}
 	
 	return resultArray;
@@ -124,6 +123,7 @@ point OuterRK(double h, point p){
 //The differential equation for the outer model
 double OuterDiff(double px, double py)
 {
+			counter1++;
 	if(printOuter) printf("%f * %f - %f * (%f - %f)",r_(px) , py , GmFemale(x + px) , Middle(px).y , py);
 	return r_(px) * py - GmFemale(x + px) * (Middle(px).y - py);
 }
@@ -144,7 +144,6 @@ point Middle(double t){
 		if(printMiddle) printf("Middle Point %d (%.10f,%.10f)\n",counter2, nextPoint.x, nextPoint.y);
 		nextPoint = MiddleRK(stepsize, nextPoint, n, t);
 		n += stepsize;
-		counter2++;
 	}
 	//printf("(Middle call g=%f, r=%f, tau=%.12f, t=%.12f, result=%.14f)\n", g,r,x+t,t, nextPoint.y);
 	return nextPoint;
@@ -183,6 +182,7 @@ point MiddleRK(double h, point p, double eta, double t){
 //The differential equation for the middle model
 double MiddleDiff(double tau, double eta, double innerY)
 {
+			counter2++;
 	if(printMiddle) printf("-1 * %f * %.10f * %.14f",-gTau(tau) , f(eta,tau) , innerY);
 	return -1 * gTau(tau) * f(eta,tau) * innerY;
 }
@@ -207,7 +207,7 @@ point Inner(double eta, double t, double k){
 	{
 		if(printInner) printf("Inner Point %d (%.10f,%.10f)\n",counter3, nextPoint.x, nextPoint.y);
 		nextPoint = InnerRK(stepsize, nextPoint, eta, t, k);
-		counter3++;
+
 	}
 
 	return nextPoint;
@@ -241,6 +241,7 @@ point InnerRK(double h, point p, double eta, double t, double k){
 //The differential equation for the inner model
 double InnerDiff(double t, double s, double fs, double k, double eta)
 {
+			counter3++;
 	if(printInner) printf("%f * %f - %d - %f * (0 - %f)",r_(t + s) ,fs , (s >= k ? 1 : 0) , GmMale(eta + s) , fs);
 	return r_(t + s) * fs - (s >= k ? 1 : 0) - GmMale(eta + s) * (0 - fs);
 }
