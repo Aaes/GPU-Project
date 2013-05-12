@@ -90,6 +90,8 @@ point* Outer(){
 	int s; //fullstep counter
 	for(s = 0; s < fullsteps; s++)
 	{
+		double nextx = (s - fullsteps) * stepsize;  // NEW
+		nextPoint.x = nextx;                        // NEW
 		if(printOuter) printf("Point %d (%.10f, %.10f)\n",counter1,nextPoint.x, nextPoint.y);
 		nextPoint = OuterRK(stepsize, nextPoint);
 		resultArray[fullsteps-1-s] = nextPoint;
