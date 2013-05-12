@@ -17,7 +17,7 @@ static int counter1 = 0; //test counter, for testing purposes
 static int counter2 = 0; //test counter, for testing purposes
 static int counter3 = 0; //test counter, for testing purposes
 
-static int printOuter = 0; 	//Print flag for the outer level - testing purposes
+static int printOuter = 1; 	//Print flag for the outer level - testing purposes
 static int printMiddle = 0;	//Print flag for the middle level - testing purposes
 static int printInner = 0;	//Print flag for the inner level - testing purposes
 
@@ -45,6 +45,8 @@ double f(double eta, double tau);
 
 int main()
 {
+	setbuf(stdout, NULL); //disable buffering for stdout
+	
 	//stepsizes
 	h1 = 3.0;
 	h2 = 2.0;
@@ -75,12 +77,7 @@ point* Outer(){
 	point nextPoint = {120.0-x,0.0}; //set the startpoint
 
 	int fullsteps = floor((120 - x) * h1); //the full amount of steps we need to take in this model
-	point* resultArray = malloc(fullsteps+1 * sizeof(point)); //initialize the resultArray. We added the +1 to make space for the initialstep
-
-	double firstStep = -(fullsteps * stepsize) - (120-x); //since the fullsteps is an int we need to take the remainder as a step first (if one exists)
-		
-	nextPoint = OuterRK(firstStep, nextPoint);
-	resultArray[fullsteps] = nextPoint;
+	point* resultArray = malloc(fullsteps * sizeof(point)); //initialize the resultArray. We added the +1 to make space for the initialstep
 		
 	if(printOuter) printf("Point initial Step (%.10f, %.10f)\n",nextPoint.x, nextPoint.y);
 
