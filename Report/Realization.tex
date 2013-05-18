@@ -128,19 +128,21 @@ The following results were gathered using Nvidias Visual Profiler for analyzing 
 \begin{tabular}[t]{|c|c|c|}
 	\hline
 \textbf{Attributes} & \textbf{MiddlePar} & \textbf{OuterPar} \\\hline
-Grid size & 1,1,1 & 1803,1,1\\\hline
+Grid size & 2,1,1 & 1700,1,1\\\hline
 Block size&128,1,1&128,1,1\\\hline
 Registers/thread&62&63\\\hline
-Shared Memory/Block&0 bytes&1859 kb\\\hline
-Global Load Efficiency&90,2\%&777.1\%\\\hline
+Shared Memory/Block*&0 bytes&1904 bytes\\\hline
+Global Load Efficiency&90,2\%&764.5\%\\\hline
 Global Store Efficiency&99,2\%&25\%\\\hline
-Branch Divergence Overhead&22.3\%& 22.1\%\\\hline
-Occupancy(Theoretical = 33.3\%)&10.5\%&33.1\%\\\hline
+Branch Divergence Overhead&22.3\%& 21.8\%\\\hline
+Occupancy**&10.5\%&33.1\%\\\hline
 \end{tabular}
 \end{center}
-\caption{Nvidia Profiler}
+\caption{Nvidia Profiler Results. Input: g=10, r=65, x=35, h1 = 10, h2 = 2, h3=10. *The visual profiler wrote that OuterPar used 1859 bytes of shared memory. This is however wrong. The command line profiler showed the correct result. The result can be calculated as 119*h2*8, which in this case is 119*2*8 = 1904bytes. **According to the profiler the theoretical occupancy is 33.3\%.}
 \label{table:profiler}
 \end{table}
+
+
 
 \subsubsection{Comparison and discussion} \hfill \\
 TODO: Discuss the profiling results\\
