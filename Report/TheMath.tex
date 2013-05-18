@@ -1,11 +1,8 @@
 %!TEX root = /Users/Nikolaj/Developer/GPU-Project/Report/Report.tex
 %- Description of the insurance math used in the current solution \\
+The algorithm in this project is used to determine the reserve the insurance company needs to possess to be able to pay the insurance holder's spouse in the case of his or her death. We assume that the spouse of the insurance holder is of the opposite gender. If the insurance holder does not have a spouse at the time of his or her death the insurance is forfeited. \\
 
-The algorithm in this project is used to determine the sum of money (called reserve) the insurance company needs to possess to be able to pay the insurance holder's spouse in the case of his or her death. The payment to the spouse will be in the form of a life annuity which is disbursed from the time of death of the insurance holder, unless the death occurs before the retirement age, in which case the money will be disbursed after a grace period determined by the insurance company at the time the insurance was taken out. 
-\\
-\\ We assume that the spouse of the insurance holder is of the opposite gender. If the insurance holder does not have a spouse at the time of his or her death the insurance is forfeited.
-\\
-\\The algorithm used here is a 4th order Runge-Kutta solver with a fixed stepsize (indsæt reference) where we use a series of constants determined before any calculation begins:
+The algorithm used is a 4th order Runge-Kutta solver with a fixed stepsize (indsæt reference) where we use a series of constants determined before any calculation begins:
 
 \begin{table}
 \begin{center}
