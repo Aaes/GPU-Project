@@ -105,7 +105,7 @@ Once we have calculated \texttt{kSum} for each thread we need to add it together
 \begin{figure}[ht!]
   \centering
     \includegraphics[scale=0.5]{Reduction}
-  \caption{Caption}
+  \caption{Reduction (INDSÆT REF)}
   \label{fig:reduction}
 \end{figure}
 
@@ -141,8 +141,6 @@ Occupancy**&10.5\%&33.1\%\\\hline
 \caption{Nvidia Profiler Results. Input: g=10, r=65, x=35, h1 = 10, h2 = 2, h3=10. *The visual profiler wrote that OuterPar used 1859 bytes of shared memory. This is however wrong. The command line profiler showed the correct result. The result can be calculated as 119*h2*8, which in this case is 119*2*8 = 1904bytes. **According to the profiler the theoretical occupancy is 33.3\%.}
 \label{table:profiler}
 \end{table}
-
-
 
 \subsubsection{Comparison and discussion} \hfill \\
 TODO: Discuss the profiling results\\
