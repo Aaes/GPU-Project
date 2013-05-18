@@ -122,7 +122,7 @@ However compared to the MiddlePar solution \texttt{kSum} was now kept in shared 
 \subsubsection{Nvidia visual profiler result} \hfill \\
 
 The following results were gathered using Nvidias Visual Profiler for analyzing both the MiddlePar and OuterPar CUDA implementation. First we will present the results and then we will discuss them in the next section.
-
+\begin{savenotes}
 \begin{table}
 \begin{center}
 \begin{tabular}[t]{|c|c|c|}
@@ -131,18 +131,27 @@ The following results were gathered using Nvidias Visual Profiler for analyzing 
 Grid size & 2,1,1 & 1700,1,1\\\hline
 Block size&128,1,1&128,1,1\\\hline
 Registers/thread&62&63\\\hline
-Shared Memory/Block*&0 bytes&1904 bytes\\\hline
-Global Load Efficiency&90,2\%&764.5\%\\\hline
+Shared Memory/Block\footnote{The visual profiler wrote that OuterPar used 1859 bytes of shared memory. This is however wrong. The command line profiler showed the correct result. The result can be calculated as 119*h2*8, which in this case is 119*2*8 = 1904 bytes.}&0 bytes&1904 bytes\\\hline
+Global Load Efficiency\footnote{We assume that at maximum we can achieve 100\% efficiency and not above.}&86,2\%&764.5\%\\\hline
 Global Store Efficiency&99,2\%&25\%\\\hline
-Branch Divergence Overhead&22.3\%& 21.8\%\\\hline
-Occupancy**&10.5\%&33.1\%\\\hline
+Branch Divergence Overhead&21.9\%& 21.8\%\\\hline
+Occupancy\footnote{According to the profiler the theoretical occupancy is 33.3\%}&6.5\%&33.1\%\\\hline
 \end{tabular}
 \end{center}
-\caption{Nvidia Profiler Results. Input: g=10, r=65, x=35, h1 = 10, h2 = 2, h3=10. *The visual profiler wrote that OuterPar used 1859 bytes of shared memory. This is however wrong. The command line profiler showed the correct result. The result can be calculated as 119*h2*8, which in this case is 119*2*8 = 1904bytes. **According to the profiler the theoretical occupancy is 33.3\%.}
+\caption{Nvidia Profiler Results. Input: g=10, r=65, x=35, h1=10, h2=2, h3=10, threadsPerBlock=128.}
 \label{table:profiler}
 \end{table}
+\end{savenotes}
 
 \subsubsection{Comparison and discussion} \hfill \\
+It is evident from the results in table \ref{table:profiler} that there are some major differences in the two implementations. Namely grid size, occupancy and global load store.
+\\ \\
+The difference in grid size make sense, when considering the implementation differences. MiddlePar seeks to parallelize a single call to Middle, whereas OuterPar tries to compute all middle calls at once. Therefore the amount of blocks in MiddlePar depends on the number of threads per block, and the amount of steps to be taken in middle. In worst case, this would require 38 blocks to cover a middle stepsize of 10 and 32 threads per block\footnote{If stepsize is 10 we need to take 119*10 steps, and with 32 threads per block we would need ceil(119*10/32) blocks to cover all steps}. This stands in large contrast to the amount of blocks used by OuterPar. The difference is thus that in MiddlePar we will create a huge number of kernels when executing the program, where the kernel is run once with OuterPar.
+\\ \\
+From this, the difference in occupancy is also evident. Running a very small number of blocks with a small number of threads is only going to use a small part of the GPU. Furthermore whenever warps fetch data from global memory during the MiddlePar execution, storing to global memory waiting for a FLOP to finish, there are almost no warps to take its place while it waits. This means that the SM's that have blocks assigned will be idle (further lowering occupancy). During OuterPar execution there are enough blocks to assign the full number of blocks per SM's on the GPU. Furthermore whenever a block finishes execution, there are several blocks waiting to be assigned to a SM leaving very little time to stand idle. The time the SM's will start to idle will begin towards the end when there are no more blocks waiting in the pipeline. All together this means that the GPU will be fully occupied during most of the kernel execution.
+\\ \\
+Global load store efficiency is different for the two programs for a very simple reason. Where most of the threads in MiddlePar writes to global memory, only a single thread per block writes to global memory in OuterPar. Whenver a request to store to global memory is initiated the the SM tries to write the minimum amount of bytes possible which is 32 bytes. Since we are only storing a single double value (8 bytes), only 25\% of the store request is actually used.
+
 TODO: Discuss the profiling results\\
 TODO: Update: Include the ideas noted down during discussion with HHB\\
 TODO: Describe which solution should be the fastest and argue why (Base argument on GPU architecture and results from profiler)
