@@ -42,20 +42,23 @@ NOTE: The description in the three model sections is loosely based on a descript
 
 \subsection{Outer model}
 The outer model is expressed as the following equation:
-\\ \\$\frac{d}{dt} f(t) = r(t) f(t) - \mu_t(x+t) (S_{x+t}^d (t) - f(t))$ \\
+\[ \frac{d}{dt} f(t) = r(t) f(t) - \mu_t(x+t) (S_{x+t}^d (t) - f(t)) \]
 
 Where $S_\tau^d$is the death benefit that for a $\tau$ year old at the time $t$ is needed to cover the payment from the insurance company, $\mu_t(x+t)$ is the mortality rate for a $(x + t)$ year old and $r(t)$ is the interest rate function. In this project the interest rate function returns the constant 0.05.
 
 The differential equation is solved from $t=120-x$ to $t=0$ with the boundary condition $f(120-x)=0$.
 
 \subsection{Middle model}
-The middle model is used to calculate $S_{x+t}^d (t)$ and is expressed with the following equation: \\ \\
-$S_\tau^d(t) = \left\{ 
+The middle model is used to calculate $S_{x+t}^d (t)$ and is expressed with the following equation: 
+
+\begin{displaymath}
+S_\tau^d(t) = \left\{ 
   \begin{array}{l l}
     	g_\tau \int	f(\eta|\tau)a_{[\eta] + g}^I(t)d\eta									& \quad \text{$\tau \le r$}\\
     	g_\tau \int	f(\eta|\tau)a_{[\eta] + r + g - \tau}^I(t)d\eta 			& \quad \text{$r \leq \tau \le r + g$}\\
 			g_\tau \int	f(\eta|\tau)a_{[\eta]}^I(t)d\eta 											& \quad \text{$r +g \leq \tau$}
-  \end{array} \right.$ \\ \\
+  \end{array} \right.
+\end{displaymath} \\
 
 Where $g_\tau$ is the probability that a $\tau$ year is married and $f(\eta|\tau)$ is the probability distribution for, that a $\tau$ year old is married to a $\eta$ year provided that the $\tau$ year old is married.
 This equation can be rewritten to this form: \\
