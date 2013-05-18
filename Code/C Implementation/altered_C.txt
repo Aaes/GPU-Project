@@ -51,13 +51,11 @@ int main(int argc, char *argv[])
 	//h2 = 2.0;
 	//h3 = strtod(argv[4], NULL);
 
-	printf("C\n");
-
   //Test data
   	//stepsizes
-  	h1 = 10.0;
+  	h1 = 3.0;
   	h2 = 2.0;
-  	h3 = 10.0;
+  	h3 = 3.0;
   	
   	//constants
   	g = 10.0;
@@ -273,10 +271,12 @@ double r_(double t) {
 
 // Gompertz-Makeham mortality intensities for Danish women
 double GmFemale(double t) {
-    return 0.0005 + pow(10, 5.728 - 10 + 0.038*(t));
+    //return 0.0005 + pow(10, 5.728 - 10 + 0.038*(t));
+	return 0.0005 + exp(log(10)*(5.728 - 10 + 0.038*(t)));
 }
 
 // Gompertz-Makeham mortality intensities for Danish men
 double GmMale(double t) {
-    return 0.0005 + pow(10, 5.880 - 10 + 0.038*(t));
+    //return 0.0005 + pow(10, 5.880 - 10 + 0.038*(t));
+	return 0.0005 + exp(log(10)*(5.880 - 10 + 0.038*(t)));
 }

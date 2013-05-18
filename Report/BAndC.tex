@@ -1,15 +1,29 @@
 %!TEX root = /Users/Nikolaj/Developer/GPU-Project/Report/Report.tex
 
-TODO: Husk at nævne at middle stepsize er altid 2 i alle test\\
+Now that it has been established that the solution produces satisfactory results it is time to examine the increase in speed the solution provides. Four different performance test was performed each one providing a different insight into how this solution was improved compared to original C\#. The full performance tests can be found in (INDSÆT APPENDIX). \\
+
+TODO: Husk at nævne at middle stepsize er altid 2 i alle test
 
 \subsection{Variable $g$, $r$ and $x$}
-TODO: Graph with runtime and variable g,r,x and constant stepsize.\\
+While changing the $g$, $r$ and $x$ values should only change the runtime with a factor, it is important to show that our solution is fast no matter what values are chosen. 
 
-\subsection{Variable Idle Threads}
-TODO: Graph with runtime and unused threads.\\
+TODO: Graph with runtime and variable g,r,x and constant stepsize. \\
+TODO: kommenter på grafen
 
 \subsection{Variable Stepsize}
+One of the advantages of using a Runge Kutta 4th order solver is that an appropiate stepsize can be chosen beforehand, enabling users to get the precision they desire at the cost of runtime. While increasing the stepsize will increase the runtime in our solution the increase is quite small compared to the increase found in both the C and C\# solutions.
+
 TODO: Graph with runtime and stepsize. Constant g,r and x. Take samples and shown that it works even for corner cases.\\
+TODO: konkluder på grafen
+
+\subsection{Variable Idle Threads}
+TODO: Graph with runtime and unused threads. ?? skal vi ha den her ?? har vi den her data?
 
 \subsection{Variable Threads per Block}
-TODO: Graph with runtime and threads per block. take samples.
+Since the number of threads per block is set at compile in the CUDA solution it is interesting to test what impact different amounts have on the performance.
+
+TODO: Graph with runtime and threads per block. take samples.\\
+TODO: konkluder på grafen \\
+
+TODO:
+Afrunding på hele B\&C

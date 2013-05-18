@@ -123,19 +123,19 @@ However compared to the MiddlePar solution \texttt{kSum} was now kept in shared 
 
 The following results were gathered using Nvidias Visual Profiler for analyzing both the MiddlePar and OuterPar CUDA implementation. First we will present the results and then we will discuss them in the next section.
 \begin{savenotes}
-\begin{table}
+\begin{table}  
 \begin{center}
 \begin{tabular}[t]{|c|c|c|}
 	\hline
 \textbf{Attributes} & \textbf{MiddlePar} & \textbf{OuterPar} \\\hline
-Grid size & 2,1,1 & 1700,1,1\\\hline
-Block size&128,1,1&128,1,1\\\hline
-Registers/thread&62&63\\\hline
-Shared Memory/Block\footnote{The visual profiler wrote that OuterPar used 1859 bytes of shared memory. This is however wrong. The command line profiler showed the correct result. The result can be calculated as 119*h2*8, which in this case is 119*2*8 = 1904 bytes.}&0 bytes&1904 bytes\\\hline
-Global Load Efficiency\footnote{We assume that at maximum we can achieve 100\% efficiency and not above.}&86,2\%&764.5\%\\\hline
+Grid size  & 2,1,1 & 1700,1,1\\\hline
+Block size & 128,1,1&128,1,1\\\hline
+Registers/thread & 62&63\\\hline
+Shared Memory/Block &0 bytes& 1904 bytes \footnote{The visual profiler wrote that OuterPar used 1859 bytes of shared memory. This is however wrong. The command line profiler showed the correct result. The result can be calculated as 119*h2*8, which in this case is 119*2*8 = 1904 bytes.}\\\hline
+Global Load Efficiency \footnote{We assume that at maximum we can achieve 100\% efficiency and not above.}&86,2\%&764.5\%\\\hline
 Global Store Efficiency&99,2\%&25\%\\\hline
 Branch Divergence Overhead&21.9\%& 21.8\%\\\hline
-Occupancy\footnote{According to the profiler the theoretical occupancy is 33.3\%}&6.5\%&33.1\%\\\hline
+Occupancy \footnote{According to the profiler the theoretical occupancy is 33.3\%}&6.5\%&33.1\%\\\hline
 \end{tabular}
 \end{center}
 \caption{Nvidia Profiler Results. Input: g=10, r=65, x=35, h1=10, h2=2, h3=10, threadsPerBlock=128.}
