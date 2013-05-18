@@ -2,9 +2,9 @@
 %kig evt på en simpson integration når vi kigger på middle da det egentlig ikke er en differential ligning men et integrale
 %simpson video: http://www.youtube.com/watch?v=ns3k-Lz7qWU
 
-TODO: skriv evt noget om autotuning, hvor programmet først tester med forskellige mængder af tråde og blokke og vælger den hurtigste løsning. \\
-
 %kan det betale sig at køre dele af programmet på CPU'en?
+
+TODO: skal vi nævne auto-tuner i forhold til vores resultater. \\
 
 %- Did we achieve what we wanted? what did we discover during the project? What can be changed in future implementations? \\
 
@@ -12,4 +12,6 @@ When computing several customers one after another it could be beneficial to sto
 
 This approach is only beneficial when the lookup in the storage is faster than performing the calculation itself. It is also not beneficial if the amount of calculations that are identical, is not large enough. It would be interesting to examine the calculation collision with a large amount of executions with different customers. A drawback with this approach is that the storage can become very large over time and that could potentially lead to slower lookups. Since the approach stops being beneficial when the lookups are slower than the actual calculations it would be smart to examine when this occurs and evaluate what results is stored. If it occurs too fast one might consider to only store the middle or outer results because they are slower to calculate than the inner results. \\
 
-If we examine the differential equation used in the middle model \\$S_\tau^d(t) = g_\tau \int f(\eta|\tau)a_{[\eta] + k}^I(t)d\eta$ it is a constant times an integral. This means that there is no need to use the Runge Kutta method here we could have chosen another approach for integral approximating such as Simpson's rule\cite{simp}. Simpson's rule requires a even number of steps which our middle model will always have as long as the stepsize is hardcoded to 2. Where the Runge Kutta method uses four calculations for each step ($k1$, $k2$, $k3$ and $k4$), Simpson's rule only uses a single calculation. This could potentially make the computing of the middle model four times faster. 
+It could also be beneficial to have a mechanism for automatically determine the optimal amount of threads per block before running the code. The optimal amount is dependent on the GPU and therefore varies from machine to machine. It would be possible to calculate the optimal amount in the code by examining the limits of the current GPU but it can be impacted by the execution time of the warps which can make the determination a quite complex equation. An easier solution could be to implement an auto-tuner that test the runtime with different amounts of thread per block and settles on the fastest. \\
+
+If we examine the differential equation used in the middle model \\$S_\tau^d(t) = g_\tau \int f(\eta|\tau)a_{[\eta] + k}^I(t)d\eta$ it is a constant times an integral. This means that there is no need to use the Runge Kutta method here we could have chosen another approach for integral approximating such as Simpson's rule\cite{simp}. Simpson's rule requires a even number of steps which our middle model will always have as long as the stepsize is hardcoded to 2. Where the Runge Kutta method uses four calculations for each step ($k1$, $k2$, $k3$ and $k4$), Simpson's rule only uses a single calculation. This could potentially make the computing of the middle model four times faster but also have the risk of reducing the precision in the outcome. 

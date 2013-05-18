@@ -89,6 +89,8 @@ $k4 = h f(x_n + h, y_n + k3 )$ \\ \\
 $x_{n + 1} = x_n + h$ \\
 $y_{n + 1} = y_n + \frac{k1}{6} + \frac{k2}{3} + \frac{k3}{3} + \frac{k4}{6} + O(h^5)$
 
+The component $O(h^5)$ denotes the error per step and is sufficiently small to be ignored in this project.
+
 \subsection{Description of execution}
 	To provide a better overview of how the mathematical principles are applied we go through how an execution is performed. Before the execution begins certain value are give before hand, namely $g$, $r$ and $x$. Additionally we need to decide on a stepsize before the execution can begin. \\
 	
