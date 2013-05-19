@@ -42,12 +42,12 @@ We then ensure that only threads, that have an id within the range of middle ste
 
 The next couple of lines is used to calculate local variables, that is used to call both \texttt{Inner(…)} and \texttt{MiddleDiff(…)}. $k1$, $k2$ and $k4$ is then calculated by calling \texttt{MiddleDiff(…)} and \texttt{Inner(…)}. In line 16 the weighted average of each $k$ is calculated and stored in the \texttt{kSum} array. This is where it is important that the thread id does not exceed the amount of steps. The size of \texttt{kSum} is exactly the total amount of steps, so if a thread id is larger than this, we risk writing data to unallocated memory. A solution could be to always make sure that the number of threads you have is equal to the amount of steps to be taken, however since both threads per block, as well as middle steps, varies it is not feasible, and cannot always be ensured. Once the sum of the $k$ values have been stored in \texttt{kSum} for all threads, the kernel terminates. The result is copied back to the CPU and used in the normal execution flow.
 
-\subsubsection{Memory considerations} \hfill \\
+\subsubsection{Memory Considerations} \hfill \\
 This CUDA implementation accesses certain constant variables quite a lot when calculating \texttt{Inner(…)}. Since we were ever only going to read these constants, it would be a good idea to place this information in constant memory. Constant memory is considerably faster than global memory(INSERT REF), with the limitation that you cannot alter the data.\\
 
 It was also considered to keep \texttt{kSum} in shared memory. Shared memory, like constant memory, is likewise considerably faster than global memory, however it is possible for more than one block to be part of the kernel execution. Shared memory allows thread within the same block to share data, but not between blocks, so shared memory was discarded for this solution, and \texttt{kSum} was kept in global memory.
 
-\subsubsection{Implementation shortcomings} \hfill \\
+\subsubsection{Implementation Shortcomings} \hfill \\
 \label{label:shortages}
 The solution described in section \ref{sec:firstattempt} has a few drawbacks:
 \begin{enumerate}
@@ -120,13 +120,13 @@ Reduction seems like the most obvious choice, however there is a downside. For r
 
 Once the sum has been calculated it is stored in the input array temp using the block id for indexing. Once all blocks have executed, the kernel terminates and temp is copied back to the CPU. When \texttt{OuterRK(…)} is called from this point on, instead of calling \texttt{Middle(…)} whenever it solves the integral, it just indexes into temp.
 
-\subsubsection{Memory considerations} \hfill \\
+\subsubsection{Memory Considerations} \hfill \\
 Just like the MiddlePar implementation this CUDA solution access certain constant variables quite a lot when calculating \texttt{Inner(…)}, and for this solution it further accesses the constants for \texttt{Middle(…)} a lot. Since we were ever only going to read these constants, we kept them in constant memory.\\
 
 However compared to the MiddlePar solution \texttt{kSum} was now kept in shared memory instead of global memory, which were made possible due to the changes we made to \texttt{Middle(…)}. Writing to this array should now be faster than the previous solution, as we can access the array much faster.
 
-\subsection{Profiling and comparison}
-\subsubsection{Nvidia visual profiler result} \hfill \\
+\subsection{Profiling and Comparison}
+\subsubsection{Nvidia Visual Profiler Results} \hfill \\
 
 The following results were gathered using Nvidias Visual Profiler for analyzing both the MiddlePar and OuterPar CUDA implementation. First we will present the results and then we will discuss them in the next section.
 \begin{savenotes}
@@ -166,7 +166,7 @@ Apart from these attribute values the following warnings were issued by the prof
 	\end{enumerate}
 \end{itemize}
 
-\subsubsection{Comparison and discussion} \hfill \\
+\subsubsection{Comparison and Discussion} \hfill \\
 It is evident from the results in table \ref{table:profiler} that there are some major differences in the two implementations. Namely grid size, occupancy and global load store.
 \\ \\
 The difference in grid size make sense, when considering the implementation differences. MiddlePar seeks to parallelize a single call to Middle, whereas OuterPar tries to compute all middle calls at once. Therefore the amount of blocks in MiddlePar depends on the number of threads per block, and the amount of steps to be taken in middle. In worst case, this would require 38 blocks to cover a middle stepsize of 10 and 32 threads per block\footnote{If stepsize is 10 we need to take $119 \times 10$ steps, and with 32 threads per block we would need ceil($119 \times \frac{10}{32}$) blocks to cover all steps}. This stands in large contrast to the amount of blocks used by OuterPar. The difference is thus that in MiddlePar we will create a huge number of kernels when executing the program, where the kernel is run once with OuterPar.

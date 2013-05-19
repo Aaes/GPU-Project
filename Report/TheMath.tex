@@ -40,7 +40,7 @@ The algorithm can be described as a combination of three models; an outer model 
 
 NOTE: The description in the three model sections is loosely based on a description for Edlund\cite{edlu} and some passages are directly translated from this document.
 
-\subsection{Outer model}
+\subsection{Outer Model}
 The outer model is expressed as the following equation:
 \begin{equation}
 \frac{d}{dt} f(t) = r(t) f(t) - \mu_t(x+t) (S_{x+t}^d (t) - f(t)) 
@@ -50,7 +50,7 @@ Where $S_\tau^d$is the death benefit that for a $\tau$ year old at the time $t$ 
 
 The differential equation is solved from $t=120-x$ to $t=0$ with the boundary condition $f(120-x)=0$.
 
-\subsection{Middle model}
+\subsection{Middle Model}
 The middle model is used to calculate $S_{x+t}^d (t)$ and is expressed with the following equation: 
 
 \begin{equation}
@@ -73,7 +73,7 @@ here the subscript for $a$ is rewritten to $[\eta]+k$ where $k$ can fall into th
 
 This differential equation is solved from $\eta = 120$ to $\eta = 1$ with the boundary condition $f(120) = 0$.
 
-\subsection{Inner model}
+\subsection{Inner Model}
 The inner model is used to calculate $a_{[\eta]+k}^I(t)$ and is expressed with the following equation:
 
 \begin{equation}
@@ -102,7 +102,7 @@ When given a point $(x_n,y_n)$, a differential equation $f$ and a stepsize $h$ o
 
 The component $O(h^5)$ denotes the error per step and is sufficiently small to be ignored in this project.
 
-\subsection{Description of execution}
+\subsection{Description of Execution}
 	To provide a better overview of how the mathematical principles are applied we go through how an execution is performed. Before the execution begins certain value are give before hand, namely $g$, $r$ and $x$. Additionally we need to decide on a stepsize before the execution can begin. \\
 	
 	The first step in the execution is to use the outer model with a starting point. Since the outer model is to be solved for $t=120-x$ to $t=0$ with the boundary condition $f(120-x)=0$ we can use the point $(120-x, 0)$ as our starting point. The next step is to actually solve the outer model equation to calculate the next approximate point. All the components in the outer models differential equation can be computed using normal equations except $S_{x+t}^d (t)$. This component can be calculated using the middle model and when it computed the calculation of the next approximate point is completed. The outer model equation is solved four times for each approximation of the next point corresponding to calculating $k1$, $k2$, $k3$ and $k4$ in the Runge Kutta method. This can be repeated $(120-x) \times stepsize$ times until the approximate point becomes $(0,y)$ which is the final point. \\
