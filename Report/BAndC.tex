@@ -41,3 +41,6 @@ TODO: konkluder på grafen \\
 
 TODO:
 Afrunding på hele B\&C (også afvigelser i middlepar på NSJ)
+
+\subsection{Register Spilling}
+It is worth mentioning that each kernel thread uses 68 registers which is more than the available limit on Nvidia GPUs with compute capability 3.0 or less. Therefore, to reproduce these results, one should avoid register spilling by including -arg=sm_35 when compiling the code with nvcc. In this way, the compiler will know that the code is going to run on GPUs with 255 registers available per thread.
