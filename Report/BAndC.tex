@@ -1,11 +1,11 @@
 %!TEX root = /Users/Nikolaj/Developer/GPU-Project/Report/Report.tex
 
-Now that it has been established that the solution produces satisfactory results it is time to examine the increase in speed the solution provides. Four different performance test was performed each one providing a different insight into how this solution was improved compared to original C\#. The full performance tests can be found in (INDSÆT APPENDIX). \\
+Now that it has been established that the solution produces satisfactory results it is time to examine the increase in speed the solution provides. Four different performance test was performed each one providing a different insight into how this solution was improved compared to original C\#. The graphs depicted in this section are all from the Gpulab06 machine but full performance tests for all machines can be found in (INDSÆT APPENDIX). \\
 
 TODO: Husk at nævne at middle stepsize er altid 2 i alle test
 
-\subsection{Variable $g$, $r$ and $x$}
-While changing the $g$, $r$ and $x$ values should only change the runtime with a factor, it is important to show that our solution is fast no matter what values are chosen. 
+\subsection{Variable $x$}
+While changing the $x$ values should only change the runtime with a factor, it is important to show that our solution is fast no matter what values are chosen. Changing $g$ and $r$ will have no performance effect and is therefore not included in the tests.
 
 TODO: Graph with runtime and variable g,r,x and constant stepsize. \\
 TODO: kommenter på grafen
@@ -13,17 +13,19 @@ TODO: kommenter på grafen
 \subsection{Variable Stepsize}
 One of the advantages of using a Runge Kutta 4th order solver is that an appropiate stepsize can be chosen beforehand, enabling users to get the precision they desire at the cost of runtime. While increasing the stepsize will increase the runtime in our solution the increase is quite small compared to the increase found in both the C and C\# solutions.
 
-TODO: Graph with runtime and stepsize. Constant g,r and x. Take samples and shown that it works even for corner cases.\\
-TODO: konkluder på grafen
+\begin{center}
+	\includegraphics[width=\textwidth]{img/Gpulab-stepsize.png}
+\end{center}
 
-\subsection{Variable Idle Threads}
-TODO: Graph with runtime and unused threads. ?? skal vi ha den her ?? har vi den her data?
+Increasing the stepsize does increase the runtime as expected but our OuterPar solution is superior in every test we performed on all the machines. The results showed up to 550 times faster runtimes compared to the original C\# implementation.
 
 \subsection{Variable Threads per Block}
 Since the number of threads per block is set at compile in the CUDA solution it is interesting to test what impact different amounts have on the performance.
 
-TODO: Graph with runtime and threads per block. take samples.\\
+\begin{center}
+	\includegraphics[width=\textwidth]{img/Gpulab-tpb.png}
+\end{center}
 TODO: konkluder på grafen \\
 
 TODO:
-Afrunding på hele B\&C
+Afrunding på hele B\&C (også afvigelser i middlepar på NSJ)
