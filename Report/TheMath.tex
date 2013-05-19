@@ -42,7 +42,9 @@ NOTE: The description in the three model sections is loosely based on a descript
 
 \subsection{Outer model}
 The outer model is expressed as the following equation:
-\[ \frac{d}{dt} f(t) = r(t) f(t) - \mu_t(x+t) (S_{x+t}^d (t) - f(t)) \]
+\begin{equation}
+\frac{d}{dt} f(t) = r(t) f(t) - \mu_t(x+t) (S_{x+t}^d (t) - f(t)) 
+\end{equation}
 
 Where $S_\tau^d$is the death benefit that for a $\tau$ year old at the time $t$ is needed to cover the payment from the insurance company, $\mu_t(x+t)$ is the mortality rate for a $(x + t)$ year old and $r(t)$ is the interest rate function. In this project the interest rate function returns the constant 0.05.
 
@@ -51,28 +53,32 @@ The differential equation is solved from $t=120-x$ to $t=0$ with the boundary co
 \subsection{Middle model}
 The middle model is used to calculate $S_{x+t}^d (t)$ and is expressed with the following equation: 
 
-\begin{displaymath}
+\begin{equation}
 S_\tau^d(t) = \left\{ 
   \begin{array}{l l}
     	g_\tau \int	f(\eta|\tau)a_{[\eta] + g}^I(t)d\eta									& \quad \text{$\tau \le r$}\\
     	g_\tau \int	f(\eta|\tau)a_{[\eta] + r + g - \tau}^I(t)d\eta 			& \quad \text{$r \leq \tau \le r + g$}\\
 			g_\tau \int	f(\eta|\tau)a_{[\eta]}^I(t)d\eta 											& \quad \text{$r +g \leq \tau$}
   \end{array} \right.
-\end{displaymath} \\
+\end{equation} \\
 
 Where $g_\tau$ is the probability that a $\tau$ year is married and $f(\eta|\tau)$ is the probability distribution for, that a $\tau$ year old is married to a $\eta$ year provided that the $\tau$ year old is married.
-This equation can be rewritten to this form: \\
+This equation can be rewritten to this form: 
 
-$\frac{d}{dn}f(\eta) = -g_\tau f(\eta|\tau)a_{[\eta]+k}^I(t)$ \\
+\begin{equation}
+\frac{d}{dn}f(\eta) = -g_\tau f(\eta|\tau)a_{[\eta]+k}^I(t)
+\end{equation}
 
 here the subscript for $a$ is rewritten to $[\eta]+k$ where $k$ can fall into three different categories as shown in table \ref{table:constants}. 
 
 This differential equation is solved from $\eta = 120$ to $\eta = 1$ with the boundary condition $f(120) = 0$.
 
 \subsection{Inner model}
-The inner model is used to calculate $a_{[\eta]+k}^I(t)$ and is expressed with the following equation: \\
+The inner model is used to calculate $a_{[\eta]+k}^I(t)$ and is expressed with the following equation:
 
-$\frac{d}{ds}f(s) = r(t+s)f(s) - 1_{s \geq k} - \mu_{t+s}(\eta + s)(0 - f(s))$ \\
+\begin{equation}
+\frac{d}{ds}f(s) = r(t+s)f(s) - 1_{s \geq k} - \mu_{t+s}(\eta + s)(0 - f(s))
+\end{equation}
 
 Where $t$, $\eta$ and $k$ are constants and $\mu_{t+s}(\eta + s)$ is the mortality rate for a $(\eta + s)$ year old.
 
@@ -80,14 +86,19 @@ This differential equation is solved from $s = 120 - \eta$ to $s = 0$ with the b
 
 \subsection{Runge-Kutta 4th order}
 The Runge-Kutta method is a method for numerically solving differential equations that builds on Eulers method \cite{nric} and the midpoint method \cite{nric}. When given a start point and a differential equation one can choose a stepsize and approximate the graph.
-When given a point $(x_n,y_n)$, a differential equation $f$ and a stepsize $h$ one can use the Runge-Kutta method to approximate the next point in the following way: \\
+When given a point $(x_n,y_n)$, a differential equation $f$ and a stepsize $h$ one can use the Runge-Kutta method to approximate the next point in the following way:
 
-\noindent $k1 = h f(x_n, y_n)$ \\
-$k2 = h f(x_n + \frac{h}{2}, y_n + \frac{k1}{h} )$ \\
-$k3 = h f(x_n + \frac{h}{2}, y_n + \frac{k2}{h} )$ \\
-$k4 = h f(x_n + h, y_n + k3 )$ \\ \\
-$x_{n + 1} = x_n + h$ \\
-$y_{n + 1} = y_n + \frac{k1}{6} + \frac{k2}{3} + \frac{k3}{3} + \frac{k4}{6} + O(h^5)$
+\begin{align}
+\nonumber &k1 = h f(x_n, y_n) \\
+\nonumber &k2 = h f(x_n + \frac{h}{2}, y_n + \frac{k1}{h} ) \\
+\nonumber &k3 = h f(x_n + \frac{h}{2}, y_n + \frac{k2}{h} ) \\
+&k4 = h f(x_n + h, y_n + k3 )
+\end{align} 
+
+\begin{align}
+\nonumber& x_{n + 1} = x_n + h \\
+&y_{n + 1} = y_n + \frac{k1}{6} + \frac{k2}{3} + \frac{k3}{3} + \frac{k4}{6} + O(h^5)
+\end{align}
 
 The component $O(h^5)$ denotes the error per step and is sufficiently small to be ignored in this project.
 
@@ -100,18 +111,25 @@ The component $O(h^5)$ denotes the error per step and is sufficiently small to b
 	
 	As the last part of the execution the inner model needs to calculate the last component used by the middle model. The inner model uses the $t$, $k$ and $\eta$ values provided by the middle model. This model uses a starting point in the same way as the other models. This model is to be solved for $s = 120 - \eta$ to $s=0$ with the boundary condition $f(120 - \eta) = 0$ which means we can use the point $(120-\eta,0)$ as a starting point. Contrary to the other two models the inner model equation only contain components that can be computed using normal equations to find the next approximate point. For each approximation of a point the inner model equation is solved four times corresponding to calculating $k1$, $k2$, $k3$ and $k4$ in the Runge Kutta method. This can be repeated $(120 - \eta) \times stepsize$ times until the approximate point becomes $(0,y)$ which is the final point and the $y$-value of this point is returned to the middle model. \\ 
 	
-	In any execution the outer model equation will be solved \\
-	$(120-x) \times stepsize \times 4$ times,\\
-	the middle model equation will be solved \\
-	$((120-x) \times stepsize) \times (119 \times stepsize \times 4)$ times, \\
-	and the inner model equation will be solved \\
-	 $((120-x) \times stepsize \times 4) \times 
+	In any execution the outer model equation will be solved 
+	
+	\begin{equation}
+	(120-x) \times stepsize \times 4
+	\end{equation} times, the middle model equation will be solved 
+	
+	\begin{equation}
+	((120-x) \times stepsize) \times (119 \times stepsize \times 4)
+	\end{equation} times, and the inner model equation will be solved 
+	
+	\begin{align}
+ \nonumber&((120-x) \times stepsize \times 4) \times  
 	(\sum\limits_{i=120 \times stepsize}^{stepsize+1} 
-	(
-	(120 - \frac{\eta}{stepsize}) \times stepsize \times 4) + 
-	((120 - \frac{2\eta - 1}{2 \times stepsize})\times stepsize \times 4) +
-	((120 - \frac{2\eta - 1}{2 \times stepsize})\times stepsize \times 4) +
+	( 
+	(120 - \frac{\eta}{stepsize}) \times stepsize \times 4) \\ \nonumber & + 
+	((120 - \frac{2\eta - 1}{2 \times stepsize})\times stepsize \times 4) + 
+	((120 - \frac{2\eta - 1}{2 \times stepsize})\times stepsize \times 4) \\& +
 	(120 - \frac{\eta-1}{stepsize}) \times stepsize \times 4)
-	)$ times.\\
+	)
+	\end{align} times.\\
 	
 	For a normal execution with $stepsize=4$, $g=30$, $r=80$ and $x=115$ the outer model equation will be solved 80 times, the middle model equation will be solved 152.320 times and the inner model equation is solved 145.008.640 times.
