@@ -7,8 +7,14 @@ TODO: Husk at nævne at middle stepsize er altid 2 i alle test
 \subsection{Variable $x$}
 While changing the $x$ values should only change the runtime with a factor, it is important to show that our solution is fast no matter what values are chosen. Changing $g$ and $r$ will have no performance effect and is therefore not included in the tests.
 
-TODO: Graph with runtime and variable g,r,x and constant stepsize. \\
-TODO: kommenter på grafen
+\begin{figure}
+\begin{center}
+	\includegraphics[width=\textwidth]{img/Gpulab-varx35.png}
+\end{center}
+\caption{The impact of changing the $x$ value on the Gpulab06 machine}
+\end{figure}
+
+When the $x$ value rises the runtime naturally increases because the outer model is solved from $120-x$ to 0. The lower the $x$ value the more steps needed. Our OuterPar solution is superior to all the other solution when comparing runtime, and even though the runtime also increases for this solution it is still a favorable runtime. The results showed up to 665 times faster runtime compared to the original C\# solution.
 
 \subsection{Variable Stepsize}
 One of the advantages of using a Runge Kutta 4th order solver is that an appropiate stepsize can be chosen beforehand, enabling users to get the precision they desire at the cost of runtime. While increasing the stepsize will increase the runtime in our solution the increase is quite small compared to the increase found in both the C and C\# solutions.
@@ -20,7 +26,7 @@ One of the advantages of using a Runge Kutta 4th order solver is that an appropi
 \caption{The impact of changing the stepsize on the Gpulab06 machine}
 \end{figure}
 
-Increasing the stepsize does increase the runtime as expected but our OuterPar solution is superior in every test we performed on all the machines. The results showed up to 550 times faster runtimes compared to the original C\# implementation.
+Increasing the stepsize does increase the runtime as expected but our OuterPar solution is superior in every test we performed on all the machines. The results showed up to 680 times faster runtimes compared to the original C\# implementation.
 
 \subsection{Variable Threads per Block}
 Since the number of threads per block is set at compile time in the CUDA solution it is interesting to test what impact different amounts have on the performance.
