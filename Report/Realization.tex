@@ -150,6 +150,22 @@ Occupancy \footnote{According to the profiler the theoretical occupancy is 33.3\
 \end{table}
 \end{savenotes}
 
+Apart from these attribute values the following warnings were issued by the profiler:
+\begin{itemize}
+	\item MiddlePar
+	\begin{enumerate}
+		\item \textbf{Low multiprocessor occupancy}. Limited grid size prevents the GPU from using all available SMP's.
+		\item \textbf{High Branch Diversion Overhead}. Divergent branches can cause significant instruction issue overhead.
+		\item \textbf{Inefficient Memcpy size}. Small memory copies do not enable the GPU to fully utilize the host to device bandwidth.
+		\item \textbf{Low Memcpy Throughput}. The memory copies are not fully using the available host to device bandwidth.
+	\end{enumerate}
+	\item OuterPar
+	\begin{enumerate}
+		\item \textbf{High Branch Diversion Overhead}. Divergent branches can cause significant instruction issue overhead.
+		\item \textbf{Low Memcpy Throughput}. The memory copies are not fully using the available host to device bandwidth.
+	\end{enumerate}
+\end{itemize}
+
 \subsubsection{Comparison and discussion} \hfill \\
 It is evident from the results in table \ref{table:profiler} that there are some major differences in the two implementations. Namely grid size, occupancy and global load store.
 \\ \\
@@ -157,7 +173,9 @@ The difference in grid size make sense, when considering the implementation diff
 \\ \\
 From this, the difference in occupancy is also evident. Running a very small number of blocks with a small number of threads is only going to use a small part of the GPU. Furthermore whenever warps fetch data from global memory during the MiddlePar execution, storing to global memory waiting for a FLOP to finish, there are almost no warps to take its place while it waits. This means that the SM's that have blocks assigned will be idle (further lowering occupancy). During OuterPar execution there are enough blocks to assign the full number of blocks per SM's on the GPU. Furthermore whenever a block finishes execution, there are several blocks waiting to be assigned to a SM leaving very little time to stand idle. The time the SM's will start to idle will begin towards the end when there are no more blocks waiting in the pipeline. All together this means that the GPU will be fully occupied during most of the kernel execution.
 \\ \\
-Global load store efficiency is different for the two programs for a very simple reason. Where most of the threads in MiddlePar writes to global memory, only a single thread per block writes to global memory in OuterPar. Whenever a request to store to global memory is initiated the SM tries to write the minimum amount of bytes possible which is 32 bytes. Since we are only storing a single double value (8 bytes), only 25\% of the store request is actually used.
+Global store efficiency is different for the two programs for a very simple reason. Where most of the threads in MiddlePar writes to global memory, only a single thread per block writes to global memory in OuterPar. Whenever a request to store to global memory is initiated the SM tries to write the minimum amount of bytes possible which is 32 bytes. Since we are only storing a single double value (8 bytes), only 25\% of the store request is actually used.
+\\ \\
+The warnings issued by the profiler clearly indicates that we are not fully utilizing the bandwidth between the host and the device. For MiddlePar we only copy a small $kSum$ array back and forth between the host and device, which in the worst case includes $119 \times 10 \times 8 = 9420$ bytes. For OuterPar it contains at most $120(years) \times 10(stepsize) \times 2(half steps included) \times 8(size of double) = 19200 bytes$. Considering the bandwidth between the host and device can handle 8 Gb/s we are not even close to the bound for either solution, and therefore both implementations are highly compute bound, rather than memory bound.
 
 \subsection{Consideration}
 In the following we will describe an alternative approach on how to parallelize the C implementation. The implementation was discarded already in the design phase because of a major limitation that would have a negative impact on the solution. The limitation will be described towards the end.
