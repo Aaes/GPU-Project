@@ -36,6 +36,7 @@ Since the number of threads per block is set at compile time in the CUDA solutio
 	\includegraphics[width=\textwidth]{img/Gpulab-tpb35.png}
 \end{center}
 \caption{The impact of changing the threads per block on the Gpulab06 machine}
+\label{ThreadsPerBlockGraph}
 \end{figure}
 
 \noindent As seen in Fig. \ref{ThreadsPerBlockGraph}, the slowest configuration is 512 threads per block. This is expected since the Gpulab06 GPU has a hardware limit of 2048 threads per SMP meaning that it schedules (2048 / 512) = 4 blocks at a time even though the hardware can schedule as many as 16. To increase performance, the amount threads per block has to be lowered to yield more blocks and thus a better utilisation of the SMPs. This fact explains the drastic improvement from 512 to 256 and from 256 til 128, at which the number of blocks reaches the exact hardware limit. Lowering the count further to 64 threads per block, however, seems to keep improving performance even though we already reached 16 blocks. 
