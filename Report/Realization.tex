@@ -150,4 +150,19 @@ The difference in grid size make sense, when considering the implementation diff
 \\ \\
 From this, the difference in occupancy is also evident. Running a very small number of blocks with a small number of threads is only going to use a small part of the GPU. Furthermore whenever warps fetch data from global memory during the MiddlePar execution, storing to global memory waiting for a FLOP to finish, there are almost no warps to take its place while it waits. This means that the SM's that have blocks assigned will be idle (further lowering occupancy). During OuterPar execution there are enough blocks to assign the full number of blocks per SM's on the GPU. Furthermore whenever a block finishes execution, there are several blocks waiting to be assigned to a SM leaving very little time to stand idle. The time the SM's will start to idle will begin towards the end when there are no more blocks waiting in the pipeline. All together this means that the GPU will be fully occupied during most of the kernel execution.
 \\ \\
-Global load store efficiency is different for the two programs for a very simple reason. Where most of the threads in MiddlePar writes to global memory, only a single thread per block writes to global memory in OuterPar. Whenver a request to store to global memory is initiated the the SM tries to write the minimum amount of bytes possible which is 32 bytes. Since we are only storing a single double value (8 bytes), only 25\% of the store request is actually used.
+Global load store efficiency is different for the two programs for a very simple reason. Where most of the threads in MiddlePar writes to global memory, only a single thread per block writes to global memory in OuterPar. Whenever a request to store to global memory is initiated the SM tries to write the minimum amount of bytes possible which is 32 bytes. Since we are only storing a single double value (8 bytes), only 25\% of the store request is actually used.
+
+\subsection{Consideration}
+In the following we will describe an alternative approach on how to parallelize the C implementation. The implementation was discarded already in the design phase because of a major limitation that would have a negative impact on the solution. The limitation will be described towards the end.
+
+The approach was to have the same setup as in OuterPar. The main difference would be in the structure of \texttt{Middle(...)} on the GPU. Instead of having a single thread for each step in middle, there would be a thread for each $k$ in middle to be calculated. This meant that for each step in middle, there would be three threads calculating the step. The main motivation for this solution were, that each thread in the OuterPar solution, had to make at least three calls to \texttt{Inner(...)}. With this approach only a single call to \texttt{Inner()} would be executed for each thread. The concept is illustrated in figure \ref{fig:alternative}.
+
+\begin{figure}[ht!]
+  \centering
+    \includegraphics[scale=0.5]{alternative_solution}
+  \caption{Alternative Solution}
+  \label{fig:alternative}
+\end{figure}
+
+There is a limitation though. Since we will be using 3 threads per step in middle, completing all the steps for even stepsize 2 would require at least 714 threads, for stepsize 3 1071 threads, for stepsize 4 1428 threads and so on. We would then be forced to loop with each thread since we would very quickly reach the limit of 1024 threads per block. Given a large enough stepsize each thread would have to do as many calls to \texttt{Inner()} anyway. Furthermore the shared kSum variable would have to be three times larger since it would not be possible to calculate the weighted sum before all threads were done. The complexity of handling all these issues were deemed to be inferior to the much simpler approach in the current OuterPar solution.
+
