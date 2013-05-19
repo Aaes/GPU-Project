@@ -13,18 +13,24 @@ TODO: kommenter på grafen
 \subsection{Variable Stepsize}
 One of the advantages of using a Runge Kutta 4th order solver is that an appropiate stepsize can be chosen beforehand, enabling users to get the precision they desire at the cost of runtime. While increasing the stepsize will increase the runtime in our solution the increase is quite small compared to the increase found in both the C and C\# solutions.
 
+\begin{figure}
 \begin{center}
 	\includegraphics[width=\textwidth]{img/Gpulab-stepsize.png}
 \end{center}
+\caption{The impact of changing the stepsize on the Gpulab06 machine}
+\end{figure}
 
 Increasing the stepsize does increase the runtime as expected but our OuterPar solution is superior in every test we performed on all the machines. The results showed up to 550 times faster runtimes compared to the original C\# implementation.
 
 \subsection{Variable Threads per Block}
 Since the number of threads per block is set at compile time in the CUDA solution it is interesting to test what impact different amounts have on the performance.
 
+\begin{figure}
 \begin{center}
 	\includegraphics[width=\textwidth]{img/Gpulab-tpb.png}
 \end{center}
+\caption{The impact of changing the threads per block on the Gpulab06 machine}
+\end{figure}
 TODO: konkluder på grafen \\
 
 TODO:
