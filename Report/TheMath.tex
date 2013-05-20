@@ -1,28 +1,28 @@
 %!TEX root = /Users/Nikolaj/Developer/GPU-Project/Report/Report.tex
 %- Description of the insurance math used in the current solution \\
 \label{themath}
-The content of this section is defined by the mathematical specification\cite{edlu} provided by the insurance company. The algorithm in this project is used to determine the reserve the insurance company needs to possess to be able to pay the insurance holder's spouse in the case of his or her death. We assume that the spouse of the insurance holder is of the opposite gender. If the insurance holder does not have a spouse at the time of his or her death the insurance is forfeited. \\
+The content of this section is defined by the mathematical specification\cite{edlu} provided by Edlund. The model in this project is used to determine the reserve the insurance company needs to possess to be able to pay the insurance holder's spouse in the case of his or her death. We assume that the spouse of the insurance holder is of the opposite gender. If the insurance holder does not have a spouse at the time of his or her death the insurance is forfeited. \\
 
-The algorithm used is a 4th order Runge-Kutta solver with a fixed stepsize (indsæt reference) where we use a series of constants determined before any calculation begins:
+The method used is the 4th order Runge-Kutta with a fixed stepsize \cite{nric} where we use a series of symbols determined before any calculation begins:
 
 \begin{table}
 \begin{center}
-\begin{tabular}[t]{|c|c|}
+\begin{tabular}[t]{|c|l|c|}
 	\hline
-\textbf{Name}&\textbf{Meaning}\\\hline
-$\tau$&The time of death of the insurance holder\\\hline
-$r$&The pension age\\\hline
-$g$&The grace period\\\hline
-$x$&The age of the insurance holder at calculation time ($t$ = 0)\\\hline
-$t$&The time of calculation\\\hline
-$h$&The Stepsize of the Runge-Kutta solution\\\hline
+\textbf{Name}&\textbf{Meaning}&\textbf{Constant}\\\hline
+$\tau$&The time of death of the insurance holder&no\\\hline
+$r$&The pension age&yes\\\hline
+$g$&The grace period&yes\\\hline
+$x$&The age of the insurance holder at calculation time ($t$ = 0)&yes\\\hline
+$t$&The time of calculation&no\\\hline
+$h$&The stepsize of the Runge-Kutta method&yes\\\hline
 \end{tabular}
 \end{center}
-\caption{Constants}
+\caption{Symbols}
 \label{table:constants}
 \end{table}
 
-$\tau$ is expressed as $x+t$. Apart from this there is also a constant $k$ which is determined by $\tau, r$ and $g$ in the following manner:
+Besides these symbols there is also a constant $k$ which is determined by $\tau, r$ and $g$ in the following manner:
 
 \begin{table}
 \begin{center}
@@ -37,22 +37,24 @@ $\tau$ is expressed as $x+t$. Apart from this there is also a constant $k$ which
 \caption{How $k$ is defined}
 \end{table}
 
-The algorithm can be described as a combination of three models; an outer model that describes the life/death state of the insurance holder, a middle model that describes the married/unmarried state of the insurance holder and an inner model that describes the life/death state of the potential spouse. \\
+\subsection{Models}
+The solution can be described as a combination of three models; an outer model that describes the life/death state of the insurance holder, a middle model that describes the married/unmarried state of the insurance holder and an inner model that describes the life/death state of the potential spouse. \\
 
-NOTE: The description in the three model sections is loosely based on a description for Edlund\cite{edlu} and some passages are directly translated from this document.
+The description in the three model sections is loosely based on a description from Edlund\cite{edlu} and some passages are directly translated from this document.
 
-\subsection{Outer Model}
+\subsubsection{Outer Model}
 The outer model is expressed as the following equation:
 \begin{equation}
 \frac{d}{dt} f(t) = r(t) f(t) - \mu_t(x+t) (S_{x+t}^d (t) - f(t)) 
+\label{outerdiff}
 \end{equation}
 
-Where $S_\tau^d$is the death benefit that for a $\tau$ year old at the time $t$ is needed to cover the payment from the insurance company, $\mu_t(x+t)$ is the mortality rate for a $(x + t)$ year old and $r(t)$ is the interest rate function. In this project the interest rate function returns the constant 0.05.
+Where $S_\tau^d$ is the death benefit that is needed to cover the payment from the insurance company at time $t$ for a $\tau$ year old. The term $\mu_t(x+t)$ is the mortality rate for a $(x + t)$ year old and $r(t)$ is the interest rate function. In this project the interest rate function returns the constant 0.05.
 
-The differential equation is solved from $t=120-x$ to $t=0$ with the boundary condition $f(120-x)=0$.
+Equation \ref{outerdiff} is solved from $t=120-x$ to $t=0$ with the initial condition $f(120-x)=0$.
 
-\subsection{Middle Model}
-The middle model is used to calculate $S_{x+t}^d (t)$ and is expressed with the following equation: 
+\subsubsection{Middle Model}
+The middle model is used to estimate $S_{x+t}^d (t)$ and is expressed with the following equation: 
 
 \begin{equation}
 S_\tau^d(t) = \left\{ 
@@ -63,31 +65,33 @@ S_\tau^d(t) = \left\{
   \end{array} \right.
 \end{equation} \\
 
-Where $g_\tau$ is the probability that a $\tau$ year is married and $f(\eta|\tau)$ is the probability distribution for, that a $\tau$ year old is married to a $\eta$ year provided that the $\tau$ year old is married.
-This equation can be rewritten to this form: 
+Where $g_\tau$ is the probability that a $\tau$ year old is married and $f(\eta|\tau)$ is the probability distribution, that a $\tau$ year old is married to an $\eta$ year old provided that the $\tau$ year old is married.
+The equation can be rewritten to this form:
 
 \begin{equation}
 \frac{d}{dn}f(\eta) = -g_\tau f(\eta|\tau)a_{[\eta]+k}^I(t)
+\label{middlediff}
 \end{equation}
 
-here the subscript for $a$ is rewritten to $[\eta]+k$ where $k$ can fall into three different categories as shown in table \ref{table:constants}. 
+which is a first order ordinary differential equation. Here the subscript for $a$ is rewritten to $(\eta,k)$ (expressed as  $[\eta] + k)$) where $k$ can fall into three different categories as shown in Table \ref{table:constants}. 
 
-This differential equation is solved from $\eta = 120$ to $\eta = 1$ with the boundary condition $f(120) = 0$.
+Equation \ref{middlediff} is solved from $\eta = 120$ to $\eta = 1$ with the initial condition $f(120) = 0$.
 
-\subsection{Inner Model}
-The inner model is used to calculate $a_{[\eta]+k}^I(t)$ and is expressed with the following equation:
+\subsubsection{Inner Model}
+The inner model is used to estimate $a_{[\eta]+k}^I(t)$ and is expressed with the following equation:
 
 \begin{equation}
 \frac{d}{ds}f(s) = r(t+s)f(s) - 1_{s \geq k} - \mu_{t+s}(\eta + s)(0 - f(s))
+\label{innerdiff}
 \end{equation}
 
-Where $t$, $\eta$ and $k$ are constants and $\mu_{t+s}(\eta + s)$ is the mortality rate for a $(\eta + s)$ year old.
+Where $t$, $\eta$ and $k$ are constants and $\mu_{t+s}(\eta + s)$ is the mortality rate for an $(\eta + s)$ year old.
 
-This differential equation is solved from $s = 120 - \eta$ to $s = 0$ with the boundary condition $f(120 - \eta) = 0$
+Equation \ref{innerdiff} is solved from $s = 120 - \eta$ to $s = 0$ with the initial condition $f(120 - \eta) = 0$
 
-\subsection{Runge-Kutta 4th order}
-The Runge-Kutta method is a method for numerically solving differential equations that builds on Eulers method \cite{nric} and the midpoint method \cite{nric}. When given a start point and a differential equation one can choose a stepsize and approximate the graph.
-When given a point $(x_n,y_n)$, a differential equation $f$ and a stepsize $h$ one can use the Runge-Kutta method to approximate the next point in the following way:
+\subsection{4th Order Runge-Kutta Method}
+The 4th order Runge-Kutta method is a method for numerically solving differential equations that also includes the 1st order Euler's method \cite{nric} and the 2nd order midpoint method \cite{nric}. Given a start point and a 1st order differential equation one can choose a stepsize and approximate the graph.
+Given a point $(x_n,y_n)$, a 1st order differential equation $f$ and a stepsize $h$ one can use the 4th order Runge-Kutta method to approximate the next point in the following way:
 
 \begin{align}
 \nonumber &k1 = h f(x_n, y_n) \\
@@ -101,36 +105,46 @@ When given a point $(x_n,y_n)$, a differential equation $f$ and a stepsize $h$ o
 &y_{n + 1} = y_n + \frac{k1}{6} + \frac{k2}{3} + \frac{k3}{3} + \frac{k4}{6} + O(h^5)
 \end{align}
 
-The component $O(h^5)$ denotes the error per step and is sufficiently small to be ignored in this project.
+The term $O(h^5)$ denotes the error per step and is sufficiently small to be ignored in this project.
 
 \subsection{Description of Execution}
-	To provide a better overview of how the mathematical principles are applied we go through how an execution is performed. Before the execution begins certain value are give before hand, namely $g$, $r$ and $x$. Additionally we need to decide on a stepsize before the execution can begin. \\
+	To provide a better overview of how the mathematical principles are applied we describe how an execution is performed. Before the execution begins certain values are given, namely $g$, $r$, $x$ and $h$. The execution is illustrated in Figure XX. \\
 	
-	The first step in the execution is to use the outer model with a starting point. Since the outer model is to be solved for $t=120-x$ to $t=0$ with the boundary condition $f(120-x)=0$ we can use the point $(120-x, 0)$ as our starting point. The next step is to actually solve the outer model equation to calculate the next approximate point. All the components in the outer models differential equation can be computed using normal equations except $S_{x+t}^d (t)$. This component can be calculated using the middle model and when it computed the calculation of the next approximate point is completed. The outer model equation is solved four times for each approximation of the next point corresponding to calculating $k1$, $k2$, $k3$ and $k4$ in the Runge Kutta method. This can be repeated $(120-x) \times stepsize$ times until the approximate point becomes $(0,y)$ which is the final point. \\
+	(INSERT HIGH LEVEL ILLUSTRATION OF EXECUTION)
 	
-	To calculate the missing component using the middle model we need to establish the value of $k$ for the point. Additionally we are given the value $t$ from the outer model. Like the outer model we need to use the middle model with a starting point. The middle model is to be solved for $\eta = 120$ to $\eta = 1$ with the boundary condition $f(120) = 0$ which means that we can use $(120,0)$ as our starting point. As with the outer model all the components of the differential equation in the middle model can be computed using normal equations except $a_{[\eta]+k}^I(t)$. This can be calculated using the inner model which is the last model in the chain. When the inner model has computed a result the calculation of the next approximate point is completed. As in the previous model the middle model equation is calculated four times corresponding to calculating $k1$, $k2$, $k3$ and $k4$ in the Runge Kutta method. This can be repeated $119 \times stepsize$ times until the approximate point becomes $(0,y)$ which is the final point and the $y$-value of this point is returned to the outer model. \\
+	% \begin{figure}[ht!]
+	%   \centering
+	%     \includegraphics[scale=0.5]{programexecutioncpu}
+	%   \caption{Execution of the mathematical model}
+	%   \label{fig:mathexecution}
+	% \end{figure}
 	
-	As the last part of the execution the inner model needs to calculate the last component used by the middle model. The inner model uses the $t$, $k$ and $\eta$ values provided by the middle model. This model uses a starting point in the same way as the other models. This model is to be solved for $s = 120 - \eta$ to $s=0$ with the boundary condition $f(120 - \eta) = 0$ which means we can use the point $(120-\eta,0)$ as a starting point. Contrary to the other two models the inner model equation only contain components that can be computed using normal equations to find the next approximate point. For each approximation of a point the inner model equation is solved four times corresponding to calculating $k1$, $k2$, $k3$ and $k4$ in the Runge Kutta method. This can be repeated $(120 - \eta) \times stepsize$ times until the approximate point becomes $(0,y)$ which is the final point and the $y$-value of this point is returned to the middle model. \\ 
+	The first step in the execution is to use the outer model with a starting point. Since the outer model is to be solved for $t=120-x$ to $t=0$ with the initial condition $f(120-x)=0$ we can use the point $(120-x, 0)$ as our starting point. The next step is to actually solve the outer model to approximate the next point. All the terms in the outer model's differential equation can be computed using analytical expressions except $S_{x+t}^d (t)$. This term can be calculated using the middle model and when it is computed the estimation of the next point is completed. The outer model equation is solved four times for each estimation of the next point, corresponding to calculating $k1$, $k2$, $k3$ and $k4$ in the Runge-Kutta method. This is repeated $\frac{120-x}{h}$ times until we reach the final point $(0,y)$. \\
 	
-	In any execution the outer model equation will be solved 
+	To estimate the missing term using the middle model we need to establish the value of $k$ for the point. Additionally we have the value $t$ from the outer model. Like the outer model we need to use the middle model with a starting point. The middle model is solved for $\eta = 120$ to $\eta = 1$ with the initial condition $f(120) = 0$ which means that we can use $(120,0)$ as our starting point. As with the outer model all the terms of the differential equation in the middle model can be computed using analytical expressions except for $a_{[\eta]+k}^I(t)$. This can be calculated using the inner model which is the last model in the chain. When the inner model has computed a result the calculation of the next approximate point is completed. As in the previous model the middle model equation is calculated four times corresponding to calculating $k1$, $k2$, $k3$ and $k4$ in the Runge-Kutta method. This is repeated $\frac{119}{h}$ times until we reach the final point $(0,y)$ where the $y$-value is returned to the outer model. \\
+	
+	In the last part of the execution, the inner model needs to estimate the last term used by the middle model. The inner model uses the $t$, $k$ and $\eta$ values provided by the middle model. This model uses a starting point in the same way as the other models. The model is solved from $s = 120 - \eta$ to $s=0$ with the initial condition $f(120 - \eta) = 0$ which means we can use the point $(120-\eta,0)$ as a starting point. Contrary to the other two models the inner model equation contains terms that can all be computed using analytical expressions to estimate the next point in the inner model. For each estimation of a point the inner model equation is solved four times corresponding to calculating $k1$, $k2$, $k3$ and $k4$ in the Runge-Kutta method. This is repeated $\frac{120 - \eta}{h}$ times until we reach the final estimated point $(0,y)$ where the $y$-value is returned to the middle model. \\ 
+	
+	\noindent In any execution the outer model equation will be solved 
 	
 	\begin{equation}
-	(120-x) \times stepsize \times 4
+	(120-x) \times steps \times 4
 	\end{equation} times, the middle model equation will be solved 
 	
 	\begin{equation}
-	((120-x) \times stepsize) \times (119 \times stepsize \times 4)
+	((120-x) \times steps) \times (119 \times steps \times 4)
 	\end{equation} times, and the inner model equation will be solved 
 	
 	\begin{align}
- \nonumber&((120-x) \times stepsize \times 4) \times  
-	(\sum\limits_{i=120 \times stepsize}^{stepsize+1} 
+ \nonumber&((120-x) \times steps \times 4) \times  
+	(\sum\limits_{i=120 \times steps}^{steps+1} 
 	( 
-	(120 - \frac{\eta}{stepsize}) \times stepsize \times 4) \\ \nonumber & + 
-	((120 - \frac{2\eta - 1}{2 \times stepsize})\times stepsize \times 4) + 
-	((120 - \frac{2\eta - 1}{2 \times stepsize})\times stepsize \times 4) \\& +
-	(120 - \frac{\eta-1}{stepsize}) \times stepsize \times 4)
+	(120 - \frac{\eta}{steps}) \times steps \times 4) \\ \nonumber & + 
+	((120 - \frac{2\eta - 1}{2 \times steps})\times steps \times 4) + 
+	((120 - \frac{2\eta - 1}{2 \times steps})\times steps \times 4) \\& +
+	(120 - \frac{\eta-1}{steps}) \times steps \times 4)
 	)
-	\end{align} times.\\
+	\label{outersteps}
+	\end{align} times, where $steps$ is the number of steps per year.\\
 	
-	For a normal execution with $stepsize=4$, $g=30$, $r=80$ and $x=115$ the outer model equation will be solved 80 times, the middle model equation will be solved 152.320 times and the inner model equation is solved 145.008.640 times.
+	For a normal execution with $steps=4$, $g=30$, $r=80$ and $x=115$ the outer model equation will be solved 80 times, the middle model equation will be solved 152.320 times and the inner model equation is solved 145.008.640 times. The actual number of steps taken by the C and C\# implementation in the outer model deviates with a small percentage (below 1\%) from the number dictated by Equation \ref{outersteps}. We have no solid knowledge of what causes the deviation, but it could have something to do with the fact the models sometimes take ``remainder'' steps to make sure that the x coordinate of the last point is exactly zero. These remainder steps contribute to the sum with 1 each even though they are not full steps and this is only taken into account by the math.
