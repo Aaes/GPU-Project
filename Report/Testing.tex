@@ -1,13 +1,13 @@
 %!TEX root = /Users/Nikolaj/Developer/GPU-Project/Report/Report.tex
-To make sure that the C\#, C and CUDA programs produce similar results up to an acceptable threshold, we run each program on a large data set and compare the outputs. Each of the 3 programs take 4 command line arguments which is (1) \emph{g} - the number of years from the policyholder dies until the first rate is disbursed, (2) \emph{r} -  age of retirement, (3) \emph{x} age at runtime and (4) \emph{stepsize} - the number of steps to take each year when the outer and the inner models are solved. Each program outputs a single number which is INSERT DESCRIPTION. \\
+To make sure that the C\#, C and CUDA programs produced similar results up to an acceptable threshold, we ran each program on a set of data and compared the outputs. Each of the three programs take four command line arguments which is $g$, $r$, $x$ and number of steps per year. Each program outputs a single number which is the $y$-value of the final point from the outer model. This number denotes the reserver needed at calculation time to be able to fulfill present and future obligations. \\
 
-We want all input from the test data set to fall within intervals that are chosen realistically and individually for each command line argument. It makes little sense to test the 3 programs with a retirement age of 200 since few people experience to become that old. Likewise, a big stepsize will make the overall test take very long time to complete which is impractical when testing during development. To avoid these problems, we made a program that generates test data in the shape of a plain text file. Each row in the file contains a comma separated list of numbers representing the 4 command line arguments to be fed to each of the 3 programs. \\
+We wanted all input from the test data set to fall within intervals chosen realistically and individually for each command line argument. It made little sense to test the three programs with a retirement age of 130 since few people experience to become that old. Likewise, few people take out insurances when they are 10 years old. To avoid these problems, we made a program that generated test data in the shape of a plain text file. Each row in the file contained a comma separated list of numbers representing the four command line arguments to be fed to each of the three programs. \\
 
-Next, we need a program that reads the lines of the test data file one by one, invokes the 3 programs in sequence and writes the corresponding results to a line in a new file. Obviously, this could be done by a single program as just described, but we wish to be able to test the C\#, C and CUDA programs separately during development without having to wait for the other 2 to finish, which might take longer time than the single program we want to test. For that reason, we make a test program for each of the 3 programs that reads a line from the test data file, invokes the program and appends the result to a text file that is private to the program being tested. \\
+Next, we needed a program that read the lines of the test data file one by one, invoked the three programs in sequence and appended the results to a file. This could be done by a single program, but we wished to be able to test the C\#, C and CUDA implementations separately during development without having to wait for the other two to finish, which might take longer time than the single implementation we wanted to test. For that reason, we made a test program for each of the three implementations that is private to the implementation being tested. \\
 
-Finally, we have 3 text files with the results from each test run. We can then import the contents of each file into a column in a spread sheet and have the sheet compare the numbers on each row to identify matching and differing results. \\
+Running all three test programs produced three text files with the result from each test run. These could then be imported into three columns in a spread sheet and be compared to each other to identify matching and differing results. \\
 
-The test scenario describe above was conducted on 3 machines with the following hardware specifications
+The test scenarios described above was conducted on three machines with the following hardware specifications:
 
 \begin{table}
 \begin{center}
@@ -17,7 +17,7 @@ The test scenario describe above was conducted on 3 machines with the following 
 	\multicolumn{1}{|m{2.8cm}|}{\centering \textbf{OS}} & Windows 7 Pro 64-bit & Windows 7 Pro 64-bit\\ \hline
 	\multicolumn{1}{|m{2.8cm}|}{\centering \textbf{CPU}} & Intel Xeon W3505 2.53 GHz & Intel Core i7-940 2.92 GHz \\ \hline
 	\multicolumn{1}{|m{2.8cm}|}{\centering \textbf{RAM}} & 4 GB & 12 GB DDR3\\ \hline
-	\multicolumn{1}{|m{2.8cm}|}{\centering \textbf{GPU}} & Nvidia Tesla C2075\cite{tesl} & Nvidia GeForce GTX 295 \cite{gtxx}\\ \hline
+	\multicolumn{1}{|m{2.8cm}|}{\centering \textbf{GPU}} & Nvidia Tesla C2075 \cite{tesl} & Nvidia GeForce GTX 295 \cite{gtxx}\\ \hline
 	\multicolumn{1}{|m{2.8cm}|}{\centering \textbf{CC}} & 2.0 & 1.3\\ \hline
 	\multicolumn{1}{|m{2.8cm}|}{\centering \textbf{CUDA cores}} & 448 & 480\\ \hline
 	\multicolumn{1}{|m{2.8cm}|}{\centering \textbf{Frequency of CUDA cores}} & 1.15 GHz & Unknown\\ \hline
@@ -42,42 +42,11 @@ The test scenario describe above was conducted on 3 machines with the following 
 	\multicolumn{1}{|m{2.8cm}|}{\centering \textbf{Total dedicated memory}} & 5 GB GDDR5 \\ \hline
 \end{tabular}
 \end{center}
-\caption{Test machines part 1}
+\caption{Test machines part 2}
 \end{table}
 
-For testing purposes we assume that the insurance holder is always a woman and the spouse is always a man. The individual test results kan be found in INDSÆT APPENDIX ELLER CD REF.
+For testing purposes we assume that the insurance holder is always a woman and the spouse is always a man as mentioned in section \ref{assumptions}. The individual test results can be found in Appendix \ref{app:rawdata}.
 
-\begin{table}
-\begin{center}
-\begin{tabular}{|c|c|c|c|c|}
-	\hline
-	\textbf{g, r, x stepsize} &\textbf{RK\_C} & \textbf{RK\_C\#} & \textbf{RK\_MiddlePar} & \textbf{RK\_OuterPar} \\ \hline
-	0, 65, 50, 1   	& 1.82995779415615 	& 1,82995779415615      	&  1.82995779415615  &  1.82130630031418   \\ \hline
-	120, 65, 50, 1  & -0.00000000000000	& -8,89456871826525E-118  &  -0.00000000000000 &  -0.00000000000000  \\ \hline
-	15, 65, 50, 1   & 0.69817447363759	& 0,698174473637594       &  0.69817447363759  &  0.69573178586507   \\ \hline
-	33, 65, 50, 1 	& 0.02180286154844	& 0,0218028615484366      &  0.02180286154844  &  0.02160904684746   \\ \hline
-	67, 65, 50, 1 	& 0.00000000001941 	& 1,94054307752595E-11    &  0.00000000001941  &  0.00000000001607   \\ \hline
-	101, 65, 50, 1 	& -0.00000000000000 & -1,73207535176409E-40   &  -0.00000000000000 &  -0.00000000000000  \\ \hline
-	10, 0, 50, 1 		& 1.82995779415615  & 1,82995779415615        &  1.82995779415615  &  1.82130630031418   \\ \hline
-	10, 120, 50, 1 	& 0.50142293032344  & 0,501422930323436       &  0.50142293032344  &  0.49749656969185   \\ \hline
-	10, 40, 50, 1 	& 1.82995779415615  & 1,82995779415615        &  1.82995779415615  &  1.82130630031418   \\ \hline
-	10, 52, 50, 1 	& 1.59154217944301  & 1,59154217944301        &  1.59154217944301  &  1.58761581881143   \\ \hline
-	10, 66, 50, 1 	& 1.02982385771638  & 1,02982385771638        &  1.02982385771638  &  1.02589749708480   \\ \hline
-	10, 70, 50, 1 	& 0.87169310938001  & 0,871693109380011       &  0.87169310938001  &  0.86776674874842   \\ \hline
-	10, 65, 0, 1 		& 0.12173120245985  & 0,121731202459848       &  0.12173120245985  &  0.12173120245985   \\ \hline
-	10, 65, 120, 1 	& 0.00000000000000  & 0                       &  0.00000000000000  &  0.00000000000000   \\ \hline
-	10, 65, 20, 1 	& 0.33157288609201  & 0,331572886092008       &  0.33157288609201  &  0.33134577683717   \\ \hline
-	10, 65, 80, 1 	& 2.05243213711217  & 2,05243213711217        &  2.05243213711217  &  2.00603919424034   \\ \hline
-	10, 65, 24, 1 	& 0.39768976600663  & 0,397689766006631       &  0.39768976600663  &  0.39724955129494   \\ \hline
-	10, 65, 74, 1 	& 2.29440353984645  & 2,29440353984645        &  2.29440353984645  &  2.26124544433898   \\ \hline
-	10, 65, 35, 1 	& 0.62809581559320  & 0,628095815593204       &  0.62809581559320  &  0.62676521521125   \\ \hline
-	10, 65, 35, 2 	& 0.62321103419750  & 0,623211034197499       &  0.62321103419750  &  0.62254945488484   \\ \hline
-	10, 65, 35, 3 	& 0.61953544882510  & 0,61822862875422        &  0.61912233970980  &  0.61878652752435   \\ \hline
-	10, 65, 35, 4 	& 0.62076344059669  & 0,620763440596687       &  0.62076344059669  &  0.62043358117438   \\ \hline
-	10, 65, 35, 5 	& 0.61809645075941  & 0,618968936813721       &  0.61767000002922  &  0.61744292063077   \\ \hline
-	10, 65, 35, 10 	& 0.61819166518059  & 0,61861431190676        &  0.61813405387931  &  0.61800260011311   \\ \hline
-\end{tabular}       
-\end{center}
-\caption{Test results}
-\end{table}
+
+
 
