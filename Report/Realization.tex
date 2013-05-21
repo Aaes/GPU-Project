@@ -58,7 +58,7 @@ for(i = level2fullsteps-1; i>=0; i--){
 \end{figure}
 
 \subsubsection{MiddlePar Memory Considerations} \hfill \\
-This implementation frequently accesses certain constant variables when calculating \texttt{Inner}. Since we only read these constants, it makes sense to place these variables in constant memory. Constant memory is considerably faster than global memory\cite{bpg} because it has it's own cache, with the limitation that you cannot alter the data.\\
+This implementation frequently accesses the number of steps per year when calculating \texttt{Inner}. Since we only read this constant, it makes sense to place this variable in constant memory. Constant memory is considerably faster than global memory\cite{bpg} because it has it's own cache, with the limitation that you cannot alter the data.\\
 
 It was also considered to keep \texttt{kSum} in shared memory. Shared memory allows threads within the same block to share data, but not between blocks. Shared memory, like constant memory, is considerably faster than global memory, however it is possible to use in this implementation as any thread from any block needs to access the array.
 
@@ -120,7 +120,7 @@ We further changed the if-statement in line 7 in Figure \ref{fig:middlepar} to a
 
 The code found in line 17-26 in Figure \ref{fig:outerpar} was originally placed in \texttt{OuterDiff} in the MiddlePar solution. The reason for this, was that we used multiple blocks for the same \texttt{Middle} call, one could never guarantee that all blocks had reached the same part of the code before moving on. The only situation where it was certain that all blocks have finished execution was when the kernel terminated. In the MiddlePar solution we therefore copied \texttt{kSum} back to the CPU and made it compute the sum there. However, now that we are only working within a single block we can make use of the \texttt{\_\_syncthreads()} statement (line 18 in figure \ref{fig:outerpar}) and compute the sum on the GPU. The \texttt{\_\_syncthreads()} statement ensures that all threads (within the same block) have reached this line of code before computing the sum. We also reset the thread id in line 17 in Figure \ref{fig:outerpar}.\\
 
-Once the weighted average of $k1$, $k2$, $k3$ and $k4$ \texttt{kSum} for each thread we need to add it together to a single value. There are basically two ways to do this; using a single thread to iterate over all the values in \texttt{kSum} and add them together, or using reduction \cite{byexample}. Reduction is a method where you make use of the threads already available, and have them add two values together, until you only have one value left. See Figure \ref{fig:reduction} for a visualization of this concept. This allow the sum of \texttt{kSum} to be computed in $log_2 (threadsperblock)$ iterations.\\
+Once the weighted average of $k1$, $k2$, $k3$ and $k4$ has been calculated for each thread we need to sum them. There are basically two ways to do this; use a single thread to iterate over all the values in \texttt{kSum} and sum them, or use reduction \cite{byexample}. Reduction is a method that makes use of the threads already available, and have them add two values until you only have one value is left. See Figure \ref{fig:reduction} for a visualization of this concept. This allows the sum of \texttt{kSum} to be computed in $log_2 (threadsperblock)$ iterations.\\
 
 \begin{figure}[ht!]
   \centering
@@ -129,9 +129,9 @@ Once the weighted average of $k1$, $k2$, $k3$ and $k4$ \texttt{kSum} for each th
   \label{fig:reduction}
 \end{figure}
 
-Reduction seems like the most obvious choice, however there is a downside. For reduction to work you need an array, and a number of threads that are a power of 2 \cite{byexample}. We can make sure that the number of threads per block is always a power of 2, however we can never guarantee that the same goes for the size of \texttt{kSum}. The size of \texttt{kSum} is $\frac{119}{h}$, and this can never be guaranteed to be the power of 2. A solution to this would be to always make sure that the size of \texttt{kSum} is the power of 2, and fill the unused indexes with zeros. However this overhead meant that we might as well just loop through \texttt{kSum} and sum everything together with a single thread. Furthermore, from an overall perspective, the computation time of summing these values together is greatly surpassed by the time it takes to finish all calls to \texttt{Inner(...)} for each thread. We therefore decided not to use reduction in this case.\\
+Reduction seems like the most obvious choice, however, the size of the array and the number of threads is the power of two, \cite{byexample}. We can make sure that the number of threads per block is always a power of 2, however we can never guarantee that the same holds for the size of \texttt{kSum}. The size of \texttt{kSum} is $\frac{119}{h}$, and this cannot be guaranteed to be the power of 2. A solution to this would be to always make sure that the size of \texttt{kSum} is the power of 2, and fill the unused indexes with zeros. However, the increase i performance were neglectable compared to the total calculation of a \texttt{Middle} call. We therefore decided not to use reduction in this case.\\
 
-Once the sum has been calculated it is stored in the input array temp using the block id for indexing. Once all blocks have executed, the kernel terminates and temp is copied back to the CPU. When \texttt{OuterRK(…)} is called from this point on, instead of calling \texttt{Middle(…)} whenever it solves the integral, it just indexes into temp. The code for calculating the initial \texttt{outerx} array for the kernel is shown in Figure \ref{fig:outerparcpu}
+Once the sum has been calculated it is stored in a temporary array holding the sum from each block. Once all blocks have computed their sum, the kernel terminates and the temporary array is copied back to the CPU. When \texttt{OuterRK} is called, instead of calling \texttt{Middle} it indexes into temporary array. The code for calculating the initial \texttt{outerx} array for the kernel is shown in Figure \ref{fig:outerparcpu}.
 
 \begin{figure}[ht]
 \begin{lstlisting}[language=c]
@@ -151,20 +151,20 @@ for(b = 0; b <= size; b++)
 	}
 }
 \end{lstlisting}
-\caption{The CPU code in \texttt{Outer(...)} for calculating all needed x values in advance.}
+\caption{The CPU code in \texttt{Outer} for calculating all needed $x$-values in advance.}
 \label{fig:outerparcpu}
 \end{figure}
 
-\subsubsection{MiddlePar Memory Considerations} \hfill \\
-Just like the MiddlePar implementation this CUDA solution access certain constant variables quite a lot when calculating \texttt{Inner(…)}, and for this solution it further accesses the constants for \texttt{Middle(…)} a lot. Since we were ever only going to read these constants, we kept them in constant memory.\\
+\subsubsection{OuterPar Memory Considerations} \hfill \\
+Just like the MiddlePar implementation, this implementation frequently accesses a constant variables when calculating \texttt{Inner}, but for this implementation it also accesses the constants $x$, $h$ and $level2fullsteps$, holding the number of fullsteps in \texttt{Middle}. Since we only read these constants we kept them in constant memory.\\
 
-However compared to the MiddlePar solution \texttt{kSum} was now kept in shared memory instead of global memory, which were made possible due to the changes we made to \texttt{Middle(…)}. Writing to this array should now be faster than the previous solution, as we can access the array much faster.
+However compared to the MiddlePar solution \texttt{kSum} was now kept in shared memory instead of global memory. Writing to this array should now be faster than the previous solution.
 
 \subsection{Profiling and Comparison}
 \subsubsection{Nvidia Visual Profiler Results} \hfill \\
 \label{sec:profiler}
 
-The following results were gathered using Nvidias Visual Profiler for analyzing both the MiddlePar and OuterPar CUDA implementation. First we will present the results and then we will discuss them in the next section.
+We used Nvidias Visual Profiler to analyse the MiddlePar and OuterPar implementation. We present the results in Table \ref{table:profiler} and discuss them in the next section.
 \begin{savenotes}
 \begin{table}  
 \begin{center}
@@ -174,14 +174,14 @@ The following results were gathered using Nvidias Visual Profiler for analyzing 
 Grid size  & 2,1,1 & 1700,1,1\\\hline
 Block size & 128,1,1&128,1,1\\\hline
 Registers/thread & 62&63\\\hline
-Shared Memory/Block &0 bytes& 1904 bytes \footnote{The visual profiler wrote that OuterPar used 1859 bytes of shared memory. This is however wrong. The command line profiler showed the correct result. The result can be calculated as $119 \times h2 \times 8$, which in this case is $119 \times 2 \times8$ = 1904 bytes.}\\\hline
-Global Load Efficiency \footnote{We assume that at maximum we can achieve 100\% efficiency and not above.}&86,2\%&764.5\%\\\hline
+Shared Memory/Block &0 bytes& 1904 bytes\footnote{The visual profiler wrote that OuterPar used 1859 bytes of shared memory. This is however wrong. The command line profiler showed the correct result. The result can be calculated as $119 \times h2 \times 8$, which in this case is $119 \times 2 \times8$ = 1904 bytes.}\\\hline
+Global Load Efficiency\footnote{We assume that we can achieve max 100\% efficiency.}&86,2\%&764.5\%\\\hline
 Global Store Efficiency&99,2\%&25\%\\\hline
 Branch Divergence Overhead&21.9\%& 21.8\%\\\hline
-Occupancy \footnote{According to the profiler the theoretical occupancy is 33.3\%}&6.5\%&33.1\%\\\hline
+Occupancy\footnote{According to the profiler the theoretical occupancy is 33.3\%.}&6.5\%&33.1\%\\\hline
 \end{tabular}
 \end{center}
-\caption{Nvidia Profiler Results. Input: g=10, r=65, x=35, h1=10, h2=2, h3=10, threadsPerBlock=128.}
+\caption{Nvidia Profiler Results. Input: $g=10$, $r=65$, $x=35$, $h1=10$, $h2=2$, $h3=10$, $threadsPerBlock=128$.}
 \label{table:profiler}
 \end{table}
 \end{savenotes}
@@ -190,22 +190,22 @@ Apart from these attribute values the following warnings were issued by the prof
 \begin{itemize}
 	\item MiddlePar
 	\begin{enumerate}
-		\item \textbf{Low multiprocessor occupancy}. Limited grid size prevents the GPU from using all available SMP's.
-		\item \textbf{High Branch Diversion Overhead}. Divergent branches can cause significant instruction issue overhead.
+		\item \textbf{Low Multiprocessor Occupancy}. Limited grid size prevents the GPU from using all available SMP's.
+		\item \textbf{High Branch Divergence Overhead}. Divergent branches can cause significant instruction issue overhead.
 		\item \textbf{Inefficient Memcpy size}. Small memory copies do not enable the GPU to fully utilize the host to device bandwidth.
 		\item \textbf{Low Memcpy Throughput}. The memory copies are not fully using the available host to device bandwidth.
 	\end{enumerate}
 	\item OuterPar
 	\begin{enumerate}
-		\item \textbf{High Branch Diversion Overhead}. Divergent branches can cause significant instruction issue overhead.
+		\item \textbf{High Branch Divergence Overhead}. Divergent branches can cause significant instruction issue overhead.
 		\item \textbf{Low Memcpy Throughput}. The memory copies are not fully using the available host to device bandwidth.
 	\end{enumerate}
 \end{itemize}
 
 \subsubsection{Comparison and Discussion} \hfill \\
-It is evident from the results in table \ref{table:profiler} that there are some major differences in the two implementations. Namely grid size, occupancy and global load store.
+It is evident from the results in Table \ref{table:profiler} that there are some major differences between the two implementations, namely grid size, occupancy and global load store.
 \\ \\
-The difference in grid size make sense, when considering the implementation differences. MiddlePar seeks to parallelize a single call to Middle, whereas OuterPar tries to compute all middle calls at once. Therefore the amount of blocks in MiddlePar depends on the number of threads per block, and the amount of steps to be taken in middle. In worst case, this would require 38 blocks to cover a middle stepsize of 10 and 32 threads per block\footnote{If stepsize is 10 we need to take $119 \times 10$ steps, and with 32 threads per block we would need ceil($119 \times \frac{10}{32}$) blocks to cover all steps}. This stands in large contrast to the amount of blocks used by OuterPar. The difference is thus that in MiddlePar we will create a huge number of kernels when executing the program, where the kernel is run once with OuterPar.
+The difference in grid size makes sense, when considering the implementation differences. MiddlePar seeks to parallelize a single call to \texttt{Middle}, whereas \texttt{OuterPar} computes all middle calls in parallel. The number of blocks in MiddlePar depends on the number of threads per block, and the number of steps to be taken in middle model. In worst case, this would require 38 blocks to cover a middle stepsize of 10 and 32 threads per block\footnote{If stepsize is 10 we need to take $119 \times 10$ steps, and with 32 threads per block we would need ceil($119 \times \frac{10}{32}$) blocks to cover all steps.}. This stands in large contrast to the amount of blocks used by OuterPar. The difference is thus that in MiddlePar we will create a huge number of kernels when executing the program, where the kernel is run once with OuterPar.
 \\ \\
 From this, the difference in occupancy is also evident. Running a very small number of blocks with a small number of threads is only going to use a small part of the GPU. Furthermore whenever warps fetch data from global memory during the MiddlePar execution, storing to global memory waiting for a FLOP to finish, there are almost no warps to take its place while it waits. This means that the SM's that have blocks assigned will be idle (further lowering occupancy). During OuterPar execution there are enough blocks to assign the full number of blocks per SM's on the GPU. Furthermore whenever a block finishes execution, there are several blocks waiting to be assigned to a SM leaving very little time to stand idle. The time the SM's will start to idle will begin towards the end when there are no more blocks waiting in the pipeline. All together this means that the GPU will be fully occupied during most of the kernel execution.
 \\ \\
