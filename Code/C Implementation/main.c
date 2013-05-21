@@ -165,20 +165,13 @@ point MiddleRK(double h, point p, double eta, double t){
 	
 	double kk = k(tau,r,g);
 
-	double y = Inner(eta, t, kk).y;
 	double k1 = h * MiddleDiff(tau, eta, y);		
-	//printf("inner(%.5f, %.5f, %.5f) = %.14f\n", eta,t,kk, y);
 
-	y = Inner(eta + h/2, t, kk).y;
 	double k2 = h * MiddleDiff(tau, eta + h/2, Inner(eta + h/2, t, kk).y);		
-	//printf("inner(%.5f, %.5f, %.5f) = %.14f\n", eta + h/2,t,kk, y);
 
 	double k3 = h * MiddleDiff(tau, eta + h/2, Inner(eta + h/2, t, kk).y);
-	//printf("inner(%.5f, %.5f, %.5f) = %.14f\n", eta + h/2,t,kk, y);
 
-	y = Inner(eta + h, t, kk).y;
 	double k4 = h * MiddleDiff(tau, eta + h, Inner(eta + h, t, kk).y);
-	//printf("inner(%.5f, %.5f, %.5f) = %.14f\n", eta + h,t,kk, y);
 
 	double newy = p.y + k1/6 + k2/3 + k3/3 + k4/6;
 	
