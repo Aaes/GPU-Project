@@ -40,7 +40,23 @@ Once the kernel has been started, each thread define their global thread id by c
 
 We then ensure that only threads, that have an id within the range of middle steps, continue on from line 7 in figure \ref{fig:middlepar}. We know that this will cause branch diversion in the last block if the total amount of threads is not equal to the amount of steps, however this is a necessary precaution as we will see soon.\\
 
-The next couple of lines is used to calculate local variables, that is used to call both \texttt{Inner(…)} and \texttt{MiddleDiff(…)}. $k1$, $k2$ and $k4$ is then calculated by calling \texttt{MiddleDiff(…)} and \texttt{Inner(…)}. In line 16 the weighted average of each $k$ is calculated and stored in the \texttt{kSum} array. This is where it is important that the thread id does not exceed the amount of steps. The size of \texttt{kSum} is exactly the total amount of steps, so if a thread id is larger than this, we risk writing data to unallocated memory. A solution could be to always make sure that the number of threads you have is equal to the amount of steps to be taken, however since both threads per block, as well as middle steps, varies it is not feasible, and cannot always be ensured. Once the sum of the $k$ values have been stored in \texttt{kSum} for all threads, the kernel terminates. The result is copied back to the CPU and used in the normal execution flow.
+The next couple of lines is used to calculate local variables, that is used to call both \texttt{Inner(…)} and \texttt{MiddleDiff(…)}. $k1$, $k2$ and $k4$ is then calculated by calling \texttt{MiddleDiff(…)} and \texttt{Inner(…)}. In line 16 the weighted average of each $k$ is calculated and stored in the \texttt{kSum} array. This is where it is important that the thread id does not exceed the amount of steps. The size of \texttt{kSum} is exactly the total amount of steps, so if a thread id is larger than this, we risk writing data to unallocated memory. A solution could be to always make sure that the number of threads you have is equal to the amount of steps to be taken, however since both threads per block, as well as middle steps, varies it is not feasible, and cannot always be ensured. Once the sum of the $k$ values have been stored in \texttt{kSum} for all threads, the kernel terminates. The result is copied back to the CPU , where the sum of the array is computed as shown in Figure \ref{fig:middleparcpu}. The program then continues as normal.
+
+\begin{figure}[H]
+\begin{lstlisting}[language=c]
+//Copy the result of running the kernel back to the CPU
+cudaMemcpy(kSum, d_kSum, level2fullsteps*sizeof(double), cudaMemcpyDeviceToHost);
+
+point nextPoint = {120.0,0.0};
+double y = nextPoint.y;
+int i;
+for(i = level2fullsteps-1; i>=0; i--){
+	y = y+kSum[i];
+}
+\end{lstlisting}
+\caption{The CPU code in \texttt{OuterDiff(...)} that sums the values of \texttt{kSum}}
+\label{fig:middleparcpu}
+\end{figure}
 
 \subsubsection{Memory Considerations} \hfill \\
 This CUDA implementation accesses certain constant variables quite a lot when calculating \texttt{Inner(…)}. Since we were ever only going to read these constants, it would be a good idea to place this information in constant memory. Constant memory is considerably faster than global memory(INSERT REF), with the limitation that you cannot alter the data.\\
@@ -62,7 +78,7 @@ These shortcommings will be adressed in the next section where we improve this s
 \subsection{Second Attempt: OuterPar}
 To address the shortcomings the GPU parallelization of \texttt{Middle(...)}, we would have have to make some major changes to the existing GPU and CPU code. First we need to make sure that \texttt{Middle(...)} is ever only being calculated using the threads from within a single block. We also needed to change \texttt{kSum} to be a shared variable array instead of an input array. \\
 
-Furthermore we had to parallelize the total calls to \texttt{Middle(...)}. Investigation showed that the differential equation of the outer integral used only the current $x$-value from the outer steps to calculate \texttt{Middle(...)}. This effectively meant that we could calculate all $x$-values in advance (we knew the start $x$-value, the end $x$-value as well as the size of each step), and further calculate all calls to \texttt{Middle(...)} in advance using these values. These could all be calculated at once on the GPU using only one kernel. Together with the changes to \texttt{Middle(...)} this would allow us to run several blocks to calculate different \texttt{Middle(...)} calls at the same time and make better use of the GPU resources. The CUDA implementation is described in the following section.
+Furthermore we had to parallelize the total calls to \texttt{Middle(...)}. Investigation showed that the differential equation of the outer integral only needed the current $x$-value from outer to calculate \texttt{Middle(...)}. This effectively meant that we could calculate all $x$-values in advance (we knew the start $x$-value, the end $x$-value as well as the size of each step), and further calculate all individual calls to \texttt{Middle(...)} in advance using these values. These could all be calculated at once on the GPU using only one kernel. Together with the changes to \texttt{Middle(...)} this would allow us to run several blocks to calculate different \texttt{Middle(...)} calls at the same time and make better use of the GPU resources. The CUDA implementation is described in the following section.
 
 \subsubsection{Implementation} \hfill \\
 The first changes were made in \texttt{Middle(…)}. The changes were made to address two of the issues described in \ref{label:shortages}, regarding the use of multiple blocks within a single call \texttt{Middle(…)}, as well as the lack of a shared variable to store \texttt{kSum}. Figure \ref{fig:outerpar} shows the updated code. The first two changes is easily  visible. Since all threads that will calculate each step in \texttt{Middle(…)} is now always within the same block, we can define a shared variable (for much faster data storing) \texttt{kSum}, and we can define the thread id to be simply the id within the block (INSERT CORRECT LINE AND FIGURE).\\
@@ -97,11 +113,11 @@ __global__ void Middle(double *outerx, double *temp){
 	}
 }
 \end{lstlisting}
-\caption{The kernel code for \texttt{Middle} in OuterPar}
+\caption{The kernel code for \texttt{Middle} in the OuterPar implementation}
 \label{fig:outerpar}
 \end{figure}
 
-The next change is that we can get the $x$-value from outer, from a pre-calculated array, \texttt{outerx}, passed to the kernel at execution time. The $x$-value needed for a specific block can then be accessed by indexing on the unique block id(INSERT CORRECT LINE AND FIGURE).\\
+The next change is that we can get the $x$-value from outer, from a pre-calculated array, \texttt{outerx}, passed to the kernel at execution time. The $x$-value needed for a specific block can then be accessed by indexing on the unique block id as seen (line 8 in figure \ref{fig:outerpar}).\\
 
 We further changed the if statement to a while loop and added a counter. Since the number of threads per block can be less than the number of steps to be taken, we want to ensure that threads iterate over multiple steps instead of just one, such that \texttt{kSum} will be correctly filled. It also ensures that if a block contains more threads than there are steps to be taken, they do not enter the while loop. Apart from the counter, everything within the while loop is the same as it was in figure \ref{fig:middlepar}.\\
 
@@ -116,9 +132,31 @@ Once we have calculated \texttt{kSum} for each thread we need to add it together
   \label{fig:reduction}
 \end{figure}
 
-Reduction seems like the most obvious choice, however there is a downside. For reduction to work you need an array, and a number of threads that are a power of 2 (insert CUDA by example reference). We can make sure that the number of threads per block is always a power of 2, however we can never guarantee that the same goes for the size of \texttt{kSum}. The size of \texttt{kSum} is 119 times the stepsize, and for good reasons this can never be guaranteed to be the power of 2. A solution to this would be to always make sure that the size of \texttt{kSum} is the power of 2, and then just fill the unused elements with zeros. However this overhead meant that we might as well just loop through \texttt{kSum} and sum everything together with a single thread. We therefore decided not to use reduction in this case.\\
+Reduction seems like the most obvious choice, however there is a downside. For reduction to work you need an array, and a number of threads that are a power of 2 (insert CUDA by example reference). We can make sure that the number of threads per block is always a power of 2, however we can never guarantee that the same goes for the size of \texttt{kSum}. The size of \texttt{kSum} is $\frac{119}{h}$, and for good reasons this can never be guaranteed to be the power of 2. A solution to this would be to always make sure that the size of \texttt{kSum} is the power of 2, and fill the unused indexes with zeros. However this overhead meant that we might as well just loop through \texttt{kSum} and sum everything together with a single thread. Furthermore, from an overall perspective, the computation time of summing these values together is greatly surpassed by the time it takes to finish all calls to \texttt{Inner(...)} for each thread. We therefore decided not to use reduction in this case.\\
 
-Once the sum has been calculated it is stored in the input array temp using the block id for indexing. Once all blocks have executed, the kernel terminates and temp is copied back to the CPU. When \texttt{OuterRK(…)} is called from this point on, instead of calling \texttt{Middle(…)} whenever it solves the integral, it just indexes into temp.
+Once the sum has been calculated it is stored in the input array temp using the block id for indexing. Once all blocks have executed, the kernel terminates and temp is copied back to the CPU. When \texttt{OuterRK(…)} is called from this point on, instead of calling \texttt{Middle(…)} whenever it solves the integral, it just indexes into temp. The code for calculating the initial \texttt{outerx} array for the kernel is shown in Figure \ref{fig:outerparcpu}
+
+\begin{figure}[ht]
+\begin{lstlisting}[language=c]
+//Prepare an array of all possible x values
+int stp = 0;
+int b; //fullstep counter
+for(b = 0; b <= size; b++)
+{
+	//Take full step
+	if(b%2 == 0){
+		steps[b] = (120-x) + stp*(-1.0/h1);
+	}
+	//Take half step (value needed in OuterRK)
+	else{
+		steps[b] = ((120-x) + stp*(-1.0/h1))+((-1.0/h1)/2);
+		stp += 1;
+	}
+}
+\end{lstlisting}
+\caption{The CPU code in \texttt{Outer(...)} for calculating all needed x values in advance.}
+\label{fig:outerparcpu}
+\end{figure}
 
 \subsubsection{Memory Considerations} \hfill \\
 Just like the MiddlePar implementation this CUDA solution access certain constant variables quite a lot when calculating \texttt{Inner(…)}, and for this solution it further accesses the constants for \texttt{Middle(…)} a lot. Since we were ever only going to read these constants, we kept them in constant memory.\\
