@@ -1,13 +1,13 @@
 %!TEX root = /Users/Nikolaj/Developer/GPU-Project/Report/Report.tex
-To make sure that the C\#, C and CUDA programs produced similar results up to an acceptable threshold, we ran each program on a set of data and compared the outputs. Each of the three programs take four command line arguments which is $g$, $r$, $x$ and number of steps per year. Each program outputs a single number which is the $y$-value of the final point from the outer model. This number denotes the reserver needed at calculation time to be able to fulfill present and future obligations. \\
+To make sure that the C\#, C and CUDA programs produced similar results up to an acceptable threshold, we ran each program on a set of data and compared the outputs. Each of the four programs take four command line arguments which is $g$, $r$, $x$ and number of steps per year. Each program outputs a single number which is the $y$-value of the final point from the outer model. This number denotes the reserve needed at calculation time to be able to fulfill present and future obligations. For benchmark testing the programs output a running time instead of a reserve.\\
 
-We wanted all input from the test data set to fall within intervals chosen realistically and individually for each command line argument. It made little sense to test the three programs with a retirement age of 130 since few people experience to become that old. Likewise, few people take out insurances when they are 10 years old. To avoid these problems, we made a program that generated test data in the shape of a plain text file. Each row in the file contained a comma separated list of numbers representing the four command line arguments to be fed to each of the three programs. \\
+We wanted all input from the test data set to fall within intervals chosen realistically and individually for each command line argument. It made little sense to test the three programs with a retirement age of 130 since few people experience to become that old. Likewise, few people take out insurances when they are 10 years old. Each input in the precision test reflects this by testing the realistic boundaries for each $g$, $r$, $x$ and number of steps per year together with input that tested values within the boundaries. For benchmarking the input would vary on $x$, number of steps per year and number of threads per block. The variables $g$ and $r$ have no impact on the runtime and was kept constant for all benchmark tests.\\
 
-Next, we needed a program that read the lines of the test data file one by one, invoked the three programs in sequence and appended the results to a file. This could be done by a single program, but we wished to be able to test the C\#, C and CUDA implementations separately during development without having to wait for the other two to finish, which might take longer time than the single implementation we wanted to test. For that reason, we made a test program for each of the three implementations that is private to the implementation being tested. \\
+Next, we needed a program that read the lines of the test data file one by one, invoked the four programs in sequence and appended the results to a file private to each program being tested. For testing on Unix a Python script was written, and on Windows a C\# program was written to conduct the tests automatically.\\
 
-Running all three test programs produced three text files with the result from each test run. These could then be imported into three columns in a spread sheet and be compared to each other to identify matching and differing results. \\
+Running the test programs produced four text files with the result from each test run. These could then be imported into four columns in a spread sheet and be compared to each other to identify matching and differing results.\\
 
-The test scenarios described above was conducted on three machines with the following hardware specifications:
+The benchmark tests were carried out on the three different machines described in Table \ref{table:machinesone} and Table \ref{table:machinestwo}. The precision tests were only conducted on the machine in Table \ref{table:machinestwo}.
 
 \begin{table}
 \begin{center}
@@ -25,6 +25,7 @@ The test scenarios described above was conducted on three machines with the foll
 \end{tabular}
 \end{center}
 \caption{Test machines part 1}
+\label{table:machinesone}
 \end{table}
 
 \begin{table}
@@ -43,10 +44,33 @@ The test scenarios described above was conducted on three machines with the foll
 \end{tabular}
 \end{center}
 \caption{Test machines part 2}
+\label{table:machinestwo}
 \end{table}
 
-For testing purposes we assume that the insurance holder is always a woman and the spouse is always a man as mentioned in section \ref{assumptions}. The individual test results can be found in Appendix \ref{app:rawdata}.
+For testing purposes we assume that the insurance holder is always a woman and the spouse is always a man as mentioned in section \ref{assumptions}. The individual test results can be found in Appendix \ref{app:rawdata}.\\
 
+The results of the precision tests show that the four different programs does not produce the exact same result. The reason for this had to be found with the basic arithmetic operations conducted in each of the four programs. The main issue had to do with calculating the next $x$-value that would be used to estimate the corresponding $y$ value in all four programs in both the inner, middle and outer model. To illustrate the problem consider a scenario where $x = 40$ and $stepsize = 0.2$. For any given point on the estimated graph any points $x$-value can be calculated as $(120-x)-s \times stepsize$ where $s$ denotes the number of steps taken at any given point. Basic mathematical arithmetics show, that after e.g $5$ steps the $x$-value for each intermediate point would be $80.00$, $79.80$, $79.60$, $79.40$, $79.20$ and $79.00$. However this is not what the four individual programs produce for such a computation. The C and CUDA programs would produce $80.00$, $79.80$, $79.60$, $79.40$, $79.20$ and $78.99$ where C\# would produce $80.00$, $79.80$, $79.60$, $79.40$, $79.20$ and $79.00$. For simplicity only two decimals is shown in this example, however during testing we would operate on 14 decimals for the C and CUDA programs and 15 decimals for the C\# program. Even for $x$-values that differs only by $1e^^(-10)$ the middle model would produce quite different results. This behavior continues all the way down to the final $x$-value and where the final reserve estimated differs between the programs.\\
 
+The difference between the C and CUDA programs is found within the inner model. The code used in inner is identical between the three implementations, but does not always produce the same result. The issue is the same experienced in outer the outer model. The $x$-value for each calculated step in inner does not produce the same result for all steps. A fraction of the $x$ values would differ, and produce different results in the end. In the inner model the final result does not differ much, but because the middle model depends on several estimations from the inner model, the error propagates through each estimation.\\
 
+The difference between the two CUDA programs, MiddlePar and OuterPar, is produced by the way OuterPar reuse previous estimated results. The different results happen in the \texttt{OuterRK} function of our implementation. The Runge-Kutta method in OuterRK gets a $x$-value as a parameter and calculates $k1$ through $k4$ using $x$, $x+\frac{stepsize}{2}$ and $x+stepsize$. Consider the input where $x = 40$ and $stepsize = 0.2$. The parameters for the $k$ estimations would be $40$, $40.9$ and $40.8$. The next call to \texttt{OuterRK} get $40.8$ as input and produce $40.7$ and $40.8$ to calculate the difference $k$-values. In the first iteration both CUDA programs produce the same $x$-value to estimate $k$. In the next iteration however MiddlePar produces $40.79$ as the initial value. Since the initial $x$-value in the next iteration is the same as the last $x$ calculated in the previous call to \texttt{OuterRK}. To the OuterPar implementation this is the exact same $x$-value, and will retrieve the same result in both situations from the temporary array calculated by the kernel. However these two different inputs does no produce the same value in the middle model, and thus the estimation done i OuterRK in MiddlePar and OuterPar does not match.\\
 
+Altogether these three issues explain, how we can have four different implementations that produce different results. The question remains which result is the right one. During this project we were given a single result from Edlund on the input $g=10$, $r=65$, $x=35$ and number of steps per year $10$. It is assumed that the result from Edlund is fairly accurate. The comparison with our results are shown in Table \ref{table:precision}.
+
+\begin{table}
+\begin{center}
+\begin{tabular}[t]{|l|l|l|}
+	\hline
+\textbf{Implementation}&\textbf{Result}&\textbf{Error}\\\hline
+Edlund&$0.6183121359826320$&$0$\\\hline
+C\#&$0.6186143119067600$&$0.000302176$\\\hline
+C&$0.61819166518059$&$0.000120471$\\\hline
+MiddlePar&$0.61813405387931$&$0.000178082$\\\hline
+OuterPar&$0.61800260011311$&$0.000309536$\\\hline
+\end{tabular}
+\end{center}
+\caption{Precision results compared to Edlund}
+\label{table:precision}
+\end{table}
+
+It is evident that none of the implementations estimate the same reserve as the result given by Edlund, however our C implementation is the implementation with the least error followed by our MiddlePar implementation. The C\# and OuterPar implementations have almost the same error margin. Given the technical difficulties explained, and that our C implementation estimate a reserve closer to the Edlund estimation than the C\# given to us, we deem our results to be within an acceptable error margin. However whether this error margin in general is acceptable would require more results from Edlund that could be used as a baseline for comparison, as well as a definition on what an acceptable error margin would be.
