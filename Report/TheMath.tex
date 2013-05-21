@@ -1,6 +1,5 @@
 %!TEX root = /Users/Nikolaj/Developer/GPU-Project/Report/Report.tex
 %- Description of the insurance math used in the current solution \\
-\label{themath}
 The content of this section is defined by the mathematical specification\cite{edlu} provided by Edlund. The model in this project is used to determine the reserve the insurance company needs to possess to be able to pay the insurance holder's spouse in the case of his or her death. We assume that the spouse of the insurance holder is of the opposite gender. If the insurance holder does not have a spouse at the time of his or her death the insurance is forfeited. \\
 
 The method used is the 4th order Runge-Kutta with a fixed stepsize \cite{nric} where we use a series of symbols determined before any calculation begins:
@@ -98,7 +97,7 @@ Given a point $(x_n,y_n)$, a 1st order differential equation $f$ and a stepsize 
 \nonumber &k2 = h f(x_n + \frac{h}{2}, y_n + \frac{k1}{h} ) \\
 \nonumber &k3 = h f(x_n + \frac{h}{2}, y_n + \frac{k2}{h} ) \\
 &k4 = h f(x_n + h, y_n + k3 )
-\label{ks}
+\label{eq:ks}
 \end{align} 
 
 \begin{align}
