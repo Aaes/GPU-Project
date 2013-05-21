@@ -37,9 +37,9 @@ __global__ void Middle(double *t, double *kSum){
 
 The implementation can be seen in Figure \ref{fig:middlepar}. Once the kernel has been started, each thread calculates their global thread id as $threadIdx.x + blockIdx.x \times blockDim.x$. This ensures that each thread within the kernel has a unique id.\\
 
-We then ensure that only threads, that have an id within the range of middle steps, continue on from line 7 in Figure \ref{fig:middlepar}. We know that this will cause branch diversion in the last block if the total amount of threads is not equal to the amount of steps, however this is a necessary precaution as the size of \texttt{kSum} is exactly the total amount of steps, so if a thread id is larger than this, we risk writing data to unallocated memory. A solution could be to always make sure that the number of threads you have is equal to the amount of steps to be taken, however since both threads per block, as well as middle steps, varies it is not feasible, and cannot always be ensured..\\
+We then ensure that only threads, that have an id within the range of middle steps, continue on from line 7 in Figure \ref{fig:middlepar}. We know that this might cause branch divergence in the last block if the total amount of threads is not equal to the amount of steps. However this is a necessary precaution as the size of \texttt{kSum} is exactly the total amount of steps, so if a thread id is larger than this, we risk writing data to unallocated memory. A solution could be to always make sure that the number of threads you have is equal to the amount of steps to be taken, however since both threads per block, as well as middle steps, varies it is not feasible, and cannot always be ensured.\\
 
-The next couple of lines is used to calculate local variables, that is used to call both \texttt{Inner} and \texttt{MiddleDiff}. $k1$, $k2$ and $k4$ is then calculated by calling \texttt{MiddleDiff(…)} and \texttt{Inner(…)}. In line 16 the weighted average of each $k$ is calculated and stored in the \texttt{kSum} array. This is where it is important that the thread id does not exceed the amount of steps. Once the sum of the $k$ values have been stored in \texttt{kSum} for all threads, the kernel terminates. The result is copied back to the CPU, where the sum of the array is computed as shown in Figure \ref{fig:middleparcpu}. The program then continues as normal.
+The next couple of lines is used to calculate local variables, that is used to call both \texttt{Inner} and \texttt{MiddleDiff}. $k1$, $k2$ and $k4$ is then calculated by calling \texttt{MiddleDiff} and \texttt{Inner}. In line 16 in Figure \ref{fig:middlepar} the weighted average of each $k$ is calculated and stored in the \texttt{kSum} array. This is where it is important that the thread id does not exceed the amount of steps. Once the sum of the $k$ values have been stored in \texttt{kSum} for all threads, the kernel terminates. The result is copied back to the CPU, where the sum of the array is computed as shown in Figure \ref{fig:middleparcpu}. The program then continues as normal.
 
 \begin{figure}[H]
 \begin{lstlisting}[language=c]
@@ -53,33 +53,31 @@ for(i = level2fullsteps-1; i>=0; i--){
 	y = y+kSum[i];
 }
 \end{lstlisting}
-\caption{The CPU code in \texttt{OuterDiff(...)} that sums the values of \texttt{kSum}}
+\caption{The CPU code in \texttt{OuterDiff} that sums the values of \texttt{kSum}}
 \label{fig:middleparcpu}
 \end{figure}
 
 \subsubsection{MiddlePar Memory Considerations} \hfill \\
-This CUDA implementation accesses certain constant variables quite a lot when calculating \texttt{Inner(…)}. Since we were ever only going to read these constants, it would be a good idea to place this information in constant memory. Constant memory is considerably faster than global memory(INSERT REF), with the limitation that you cannot alter the data.\\
+This implementation frequently accesses certain constant variables when calculating \texttt{Inner}. Since we only read these constants, it makes sense to place these variables in constant memory. Constant memory is considerably faster than global memory\cite{bpg} because it has it's own cache, with the limitation that you cannot alter the data.\\
 
-It was also considered to keep \texttt{kSum} in shared memory. Shared memory, like constant memory, is likewise considerably faster than global memory, however it is possible for more than one block to be part of the kernel execution. Shared memory allows thread within the same block to share data, but not between blocks, so shared memory was discarded for this solution, and \texttt{kSum} was kept in global memory.
+It was also considered to keep \texttt{kSum} in shared memory. Shared memory allows threads within the same block to share data, but not between blocks. Shared memory, like constant memory, is considerably faster than global memory, however it is possible to use in this implementation as any thread from any block needs to access the array.
 
-\subsubsection{MiddlePar Implementation Shortcomings} \hfill \\
+\subsubsection{MiddlePar Shortcomings} \hfill \\
 \label{label:shortages}
-The solution described in section \ref{sec:firstattempt} has a few drawbacks:
+The implementation described in section \ref{sec:firstattempt} has a few shortcomings:
 \begin{enumerate}
-	\item Each time a call to \texttt{Middle(...)} is made, a new GPU context would be set up, variables would be copied to the GPU and a new kernel would be started. Doing this for a low $x$-value and a high $stepsize$, creates a large amount of kernels.
-	\item This solution potentially needs more than one block to parallelize \texttt{Middle(..)} if the amount of threads per block are low. Even though it would speed up the call to \texttt{Middle(...)}, it does not speed it up the amount of total calls made to \texttt{Middle(...)}.
-	\item We are not using a lot of threads or blocks to actually make the calculations, compared to how many threads and blocks can be run in parallel on modern GPUs.
+	\item Each time a call to \texttt{Middle} is made, variables is copied to the GPU and a new kernel would be started. Creating a large number of kernels that terminates quickly introduces a lot of overhead. In MiddlePar this is the case when the values for $x$ and $h$ are high.
+	\item The implementation potentially needs more than one block to parallelize the steps \texttt{Middle} if the amount of threads per block are low. Even though it does parallelize each step in \texttt{Middle}, the calls to \texttt{Middle} are still sequential.
+	\item We are not exploiting all available SMP's as shown by the profiler and described in Section \ref{sec:profiler}.
 	\item It would be much more efficient to use shared memory for storing the \texttt{kSum} array, instead of keeping it in global memory.
 \end{enumerate}
 
-These shortcommings will be adressed in the next section where we improve this solution.\\
-
 \subsection{Second Attempt: OuterPar}
-To address the shortcomings the GPU parallelization of \texttt{Middle(...)}, we would have have to make some major changes to the existing GPU and CPU code. First we need to make sure that \texttt{Middle(...)} is ever only being calculated using the threads from within a single block. We also needed to change \texttt{kSum} to be a shared variable array instead of an input array. \\
+To address the shortcomings of the MiddlePar implementation, we made some major changes to the existing GPU and CPU code. First we made sure that \texttt{Middle} was only being calculated using the threads within a single block. We also changed \texttt{kSum} to be a shared variable array instead of a kernel parameter. \\
 
-Furthermore we had to parallelize the total calls to \texttt{Middle(...)}. Investigation showed that the differential equation of the outer integral only needed the current $x$-value from outer to calculate \texttt{Middle(...)}. This effectively meant that we could calculate all $x$-values in advance (we knew the start $x$-value, the end $x$-value as well as the size of each step), and further calculate all individual calls to \texttt{Middle(...)} in advance using these values. These could all be calculated at once on the GPU using only one kernel. Together with the changes to \texttt{Middle(...)} this would allow us to run several blocks to calculate different \texttt{Middle(...)} calls at the same time and make better use of the GPU resources. The CUDA implementation is described in the following section.
+Furthermore we parallelized the calls to \texttt{Middle}. A closer look at the outer model shows that the different calculations of \texttt{Middle} in every outer step depends only on one variable; the current $x$-value. This effectively meant that we could calculate all $x$-values in advance since the initial $x$-value, the final $x$-value as well as the stepsize $h$ are known, and further calculate all individual calls to \texttt{Middle} in advance using these values. These could all be calculated at once on the GPU using only one kernel. Together with the changes to \texttt{Middle(...)} this would allow us to run several blocks to calculate different \texttt{Middle(...)} calls at the same time and make better use of the GPU resources. The CUDA implementation is described in the following section.
 
-\subsubsection{MiddlePar Implementation} \hfill \\
+\subsubsection{OuterPar Implementation} \hfill \\
 The first changes were made in \texttt{Middle(…)}. The changes were made to address two of the issues described in \ref{label:shortages}, regarding the use of multiple blocks within a single call \texttt{Middle(…)}, as well as the lack of a shared variable to store \texttt{kSum}. Figure \ref{fig:outerpar} shows the updated code. The first two changes is easily  visible. Since all threads that will calculate each step in \texttt{Middle(…)} is now always within the same block, we can define a shared variable (for much faster data storing) \texttt{kSum}, and we can define the thread id to be simply the id within the block (INSERT CORRECT LINE AND FIGURE).\\
 
 \begin{figure}[ht]
@@ -164,6 +162,7 @@ However compared to the MiddlePar solution \texttt{kSum} was now kept in shared 
 
 \subsection{Profiling and Comparison}
 \subsubsection{Nvidia Visual Profiler Results} \hfill \\
+\label{sec:profiler}
 
 The following results were gathered using Nvidias Visual Profiler for analyzing both the MiddlePar and OuterPar CUDA implementation. First we will present the results and then we will discuss them in the next section.
 \begin{savenotes}
