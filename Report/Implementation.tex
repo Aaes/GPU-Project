@@ -19,7 +19,7 @@ This is not necessary for the middle and outer models since they always take an 
 
 Since the middle model is always solved from 120 to 1 it means that the amount of full steps is constant and is therefore calculated in the program's main method. \\
 
-The $f$ function in Expressions \ref{eq:ks} represents the differential equation that is solved by the Runge-Kutta method. As seen from the figure, $f$ is given both the value of $x$ and $f(x)$ because these values may be needed to solve any differential equation. However, looking at Equation \ref{middlediff} for the middle model, one thing stands out from the rest, namely that $f(\eta)$ does not appear on the right hand side of the equality sign. In the implementation, this effectively means that we can ignore the second argument to the $f$ function in Expressions \ref{eq:ks} and only provide the first. Since $x_n$ is the same in $k2$ and $k3$, we can estimate $k2$ and $k3$ using a single method call. 
+The $f$ function in Expressions \ref{eq:ks} represents the differential equation that is solved by the Runge-Kutta method. As seen, $f$ is given both the value of $x$ and $f(x)$ because these values may be needed to solve any differential equation. However, looking at Equation \ref{middlediff} for the middle model, one thing stands out from the rest, namely that $f(\eta)$ does not appear on the right hand side of the equality sign. In the implementation, this effectively means that we can ignore the second argument to the $f$ function in Expressions \ref{eq:ks} and only provide the first. Since $x_n$ is the same in $k2$ and $k3$, we can estimate $k2$ and $k3$ using a single method call. 
 
 
 
