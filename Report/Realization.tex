@@ -5,12 +5,12 @@ The following two sections describe the two CUDA implementations made during thi
 \label{sec:firstattempt}
 In order to parallelize the C implementation and utilize the GPU, we had to analyze each model. Our approach was to locate the most obvious part that could be parallelized, and develop a CUDA version. Since not all computations could be parallelized, we acknowledged that some computation would be run on the CPU, and the rest would be run on the GPU. The most obvious possibility for a CUDA solution was found within the middle model. Contrary to both the outer and the inner model, each step within the middle model was not dependent on the previous step in the same model. A step in \texttt{Middle} is calculated by adding the weighted average of $k1$, $k2$, $k3$, $k4$ to the $y$-value of the previous step. This means that for each step we can calculate the weighted average of all the $k$ values before we add the corresponding y value. This is a good start since the calculation of each $k$, is essentially a call to the inner model. The MiddlePar implementation is explained in the following section.
 
-\subsubsection{MiddlePar Implementation} \hfill\\
-The implementation of the kernel is invoked in the method \texttt{OuterDiff}, which is the method that needs a result from the middle model. \texttt{OuterDiff} prepares two variables that is copied to the GPU. The first is the current $x$-value from the outer model, that is needed to calculate \texttt{Middle}, and an array called \texttt{kSum}. \texttt{kSum} is used to store the weighted averages of $k1$, $k2$, $k3$ and $k4$, calculated by each thread. With these weighted averages, calculating each step in \texttt{Middle} can be done much faster, since it is only a matter of adding two double values together for each step. \\ \\
+\subsubsection{MiddlePar Implementation}
+The implementation of the kernel is invoked in the method \texttt{OuterDiff}, which is the method that needs a result from the middle model. \texttt{OuterDiff} prepares two variables that is copied to the GPU. The first is the current $x$-value from the outer model, that is needed to calculate \texttt{Middle}, and an array called \texttt{kSum}. \texttt{kSum} is used to store the weighted averages of $k1$, $k2$, $k3$ and $k4$, calculated by each thread. With these weighted averages, calculating each step in \texttt{Middle} can be done much faster, since it is only a matter of adding two double values together for each step. \\
 
-Based on the stepsize it is possible to calculate exactly how many steps \texttt{Middle} needs to take. Prior to starting the kernel, we need to make sure that there are enough threads available, such that there are at least one thread for each step. The amount of threads per block is set prior to program execution, and before starting the kernel, the amount of blocks needed to ensure enough threads is automatically calculated.\\
+Based on the stepsize it is possible to calculate exactly how many steps \texttt{Middle} needs to take. Prior to starting the kernel, we need to make sure that there are enough threads available, such that there are at least one thread for each step. The amount of threads per block is set prior to program execution, and before starting the kernel, the amount of blocks needed to ensure enough threads is automatically calculated.
 
-\begin{figure}[H]
+\begin{figure}[ht!]
 \begin{lstlisting}[language=c]
 __global__ void Middle(double *t, double *kSum){
 	int tid = threadIdx.x + blockIdx.x*blockDim.x;
@@ -41,7 +41,7 @@ We then ensure that only threads, that have an id within the range of middle ste
 
 The next couple of lines is used to calculate local variables, that is used to call both \texttt{Inner} and \texttt{MiddleDiff}. $k1$, $k2$ and $k4$ is then calculated by calling \texttt{MiddleDiff} and \texttt{Inner}. In line 16 in Fig. \ref{fig:middlepar} the weighted average of each $k$ is calculated and stored in the \texttt{kSum} array. This is where it is important that the thread id does not exceed the amount of steps. Once the sum of the $k$ values have been stored in \texttt{kSum} for all threads, the kernel terminates. The result is copied back to the CPU, where the sum of the array is computed as shown in Fig. \ref{fig:middleparcpu}. The program then continues as normal.
 
-\begin{figure}[H]
+\begin{figure}[ht!]
 \begin{lstlisting}[language=c]
 //Copy the result of running the kernel back to the CPU
 cudaMemcpy(kSum, d_kSum, level2fullsteps*sizeof(double), cudaMemcpyDeviceToHost);
@@ -53,10 +53,17 @@ for(i = level2fullsteps-1; i>=0; i--){
 	y = y+kSum[i];
 }
 \end{lstlisting}
-
-The execution flow changes can be seen in Fig \ref{fig:middleparexec}.
 \caption{The CPU code in \texttt{OuterDiff} that sums the values of \texttt{kSum}}
 \label{fig:middleparcpu}
+\end{figure}
+
+The execution flow of the MiddlePar implementation is shown in Fig. \ref{fig:middleparexec}.
+
+\begin{figure}[ht!]
+  \centering
+    \includegraphics[scale=0.5]{ProgramexecutionMiddlePar}
+  \caption{Execution flow: MiddlePar implementation}
+  \label{fig:middleparexec}
 \end{figure}
 
 \subsubsection{MiddlePar Memory Considerations} \hfill \\
@@ -155,6 +162,15 @@ for(b = 0; b <= size; b++)
 \end{lstlisting}
 \caption{The CPU code in \texttt{Outer} for calculating all needed $x$-values in advance.}
 \label{fig:outerparcpu}
+\end{figure}
+
+The execution flow of the MiddlePar implementation is shown in Fig. \ref{fig:outerparexec}.
+
+\begin{figure}[ht!]
+  \centering
+    \includegraphics[scale=0.5]{ProgramexecutionOuterPar}
+  \caption{Execution flow: OuterPar implementation}
+  \label{fig:outerparexec}
 \end{figure}
 
 \subsubsection{OuterPar Memory Considerations} \hfill \\
