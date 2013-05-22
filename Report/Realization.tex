@@ -67,7 +67,7 @@ The execution flow of the MiddlePar implementation is shown in Fig. \ref{fig:mid
 \end{figure}
 
 \subsubsection{MiddlePar Memory Considerations} \hfill \\
-This implementation frequently accesses the number of steps per year when calculating \texttt{Inner}. Since we only read this constant, it makes sense to place this variable in constant memory. Constant memory is considerably faster than global memory\cite{bpg} because it has it's own cache, with the limitation that you cannot alter the data.\\
+This implementation frequently accesses the number of steps per year when calculating \texttt{Inner}. Since we only read this constant, it makes sense to place this variable in constant memory. Constant memory is considerably faster than global memory \cite{bpg} because it has it's own cache, with the limitation that you cannot alter the data.\\
 
 It was also considered to keep \texttt{kSum} in shared memory. Shared memory allows threads within the same block to share data, but not between blocks. Shared memory, like constant memory, is considerably faster than global memory, however it is possible to use in this implementation as any thread from any block needs to access the array.
 
@@ -89,7 +89,7 @@ Furthermore we parallelized the calls to \texttt{Middle}. A closer look at the o
 \subsubsection{OuterPar Implementation} \hfill \\
 The first changes to \texttt{Middle} were to modify the calculation of the thread id as shown in line 3 and change kSum to a shared variable as shown in line 2 in Fig. \ref{fig:outerpar}. The changes were made to address two of the issues described in \ref{label:shortages}, regarding the use of multiple blocks within a single call \texttt{Middle(…)}, as well as the lack of a shared variable to store \texttt{kSum}. Fig. \ref{fig:outerpar} shows the updated code.
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
 \begin{lstlisting}[language=c]
 __global__ void Middle(double *outerx, double *temp){
 	extern __shared__ double kSum[];
@@ -239,7 +239,7 @@ The warnings issued by the profiler clearly indicates that the implementation no
 \subsection{Possible Extension}
 In the following we will describe an alternative extension on how to parallelize the C implementation. \\
 
-The approach was to have the same setup as in OuterPar. The main difference would was the structure of \texttt{Middle(...)} on the GPU. Instead of having a single thread for each step in middle, there would be a thread for each $k$. This would mean that there would be three threads for each step in middle. With this approach only a single call to \texttt{Inner()} would be executed for each thread. The concept is illustrated in Fig. \ref{fig:alternative}.
+The approach was to have the same setup as in OuterPar. The main difference would was the structure of \texttt{Middle(...)} on the GPU. Instead of having a single thread for each step in middle, there would be a thread for each $k$. This would mean that there would be three threads for each step in middle. With this approach only a single call to \texttt{Inner()} would be executed for each thread. The concept is illustrated in Fig. \ref{fig:alternative}. \\
 
 \begin{figure}[ht!]
   \centering
