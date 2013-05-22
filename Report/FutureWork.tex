@@ -1,24 +1,24 @@
 %!TEX root = /Users/Nikolaj/Developer/GPU-Project/Report/Report.tex
-This project has a limited scope and we would like to document suggestions for future expansion of the project:
+This project has a limited scope and we would like to document suggestions for future expansions of the project.
 
 \begin{description}
 	
 \item[Formal verification of correctness of code] \hfill \\
-	We assume that the code produces the correct results because it is modeled after existing code and because our test of INDSÆT KORREKT TAL values are identical to the results produced by the existing code. Our test give a sense of correctness but without formal verification there is always the possibility that a corner case is not covered and will produce incorrect results. \\
+We assume that the code produces the correct results because it is modeled after existing code and because our test produce satisfactory results. Our test give a sense of correctness but without formal verification there is always the possibility that a corner case is not covered and will produce incorrect results. \\
 
-\item[Handling multiple customers] \hfill \\
-This project is built around the assumption that it would be run for a single customer at a time. If it is to have any real world use it must be able to run multiple customers at the same time. While this is possible with the current implementation is has not been tested or optimized. It would be interesting to examine how GPGPUs could be utilized when handling multiple customers and if the time used per customer could be even lower than it is when handling a single customer. \\
+\item[Handling multiple insurance holders] \hfill \\
+This implementation is built around the assumption that it would be run for a single insurance holder at a time. If it is to have any real-world use, it must be able to handle multiple insurance holders at the same time. While this is possible with the current implementation is has not been tested or parallelized for multiple insurance holders. It would be interesting to examine how GPUs could be utilized to handle multiple insurance holders in parallel and if the time used could be lower than when handling them sequencially. \\
 
 \item[Variable interest curve] \hfill \\
 In this project the interest rate is assumed to be a constant of 5 \%. However in the real world this is not the case. The interest rate is variable over time and the program should be able to take this into account. \\
 
-\item[Switch genders at runtime] \hfill \\
-When handling multiple customers in the same execution being able to switch the genders of the insurance holder and spouse at runtime is necessary. This is not a complex extension of the program but it is still something that is not implemented in this project. The difference between using female and male is the function used to calculate their mortality intensities. Changing whether the female or male function should be called for each customer and spouse should be trivial in the C and C\# implementation but might have repercussions in the CUDA C implementation since it can generate branch divergence. \\
+\item[Switch genders] \hfill \\
+When handling insurance holders, being able to switch the gender of the insurance holder and spouse is necessary. This is not a complex extension but it is not a part of the current implementation. The only gender specific code is the \texttt{GmFemale} and \texttt{GmMale} methods which are used to calculate mortality intensities. Changing whether the female or male function should be called for each insurance holder and spouse should be trivial in the implementation. \\
 
 \item[Same-gender marriages] \hfill \\
-As an addition to switching gender at runtime the program will be able to emulate the real world better if it supported same-gender marriages. The same considerations are present as the function to calculate mortality intensities is now the same for both the insurance holder and the spouse. Additionally the function used to calculate the probability that the insurance holder is married might be different for same-gender marriages. \\
+As an addition to switching gender the implementation would be able to emulate the real world better if it supported same-gender marriages. 
+To support same-gender marriages the implementation would have to be changed so that the same method, either \texttt{GmFemale} or \texttt{GmMale}, is called for the insurance holder and spouse. Additionally the method returning the probability that a person is married might be different for same-gender marriages. \\
 
 \item[Upper bound on threads per block] \hfill \\
-To avoid unecessary crashes the program should contain a mechanism to prevent a user from setting the number of threads per block higher than the number of threads allowed in a single SMP on the active GPU. If it is set higher the CUDA kernel will simply not run and the program should provide an error message.
-
+To avoid unnecessary crashes, the program should contain a mechanism to prevent the user from setting the number of threads per block higher than the number of threads allowed in a single SMP on the active GPU. If it is set higher, the kernel will not run and the implementation should provide an error message.
 \end{description}
