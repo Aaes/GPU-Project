@@ -108,16 +108,14 @@ Given a point $(x_n,y_n)$, a 1st order differential equation $f$ and a stepsize 
 The term $O(h^5)$ denotes the error per step and is sufficiently small to be ignored in this project.
 
 \subsection{Description of Execution}
-	To provide a better overview of how the mathematical principles are applied we describe how an execution is performed. Before the execution begins certain values are given, namely $g$, $r$, $x$ and $h$. The execution is illustrated in Fig. XX. \\
+	To provide a better overview of how the mathematical principles are applied we describe how an execution is performed. Before the execution begins certain values are given, namely $g$, $r$, $x$ and $h$. The execution is illustrated in Fig. \ref{fig:mathexecution}. \\
 	
-	(INSERT HIGH LEVEL ILLUSTRATION OF EXECUTION)
-	
-	% \begin{figure}[ht!]
-	%   \centering
-	%     \includegraphics[scale=0.5]{programexecutioncpu}
-	%   \caption{Execution of the mathematical model}
-	%   \label{fig:mathexecution}
-	% \end{figure}
+	\begin{figure}[ht!]
+	  \centering
+	    \includegraphics[scale=0.5]{Highlevelflow}
+	  \caption{Execution hierarchy}
+	  \label{fig:mathexecution}
+	\end{figure}
 	
 	The first step in the execution is to use the outer model with a starting point. Since the outer model is to be solved for $t=120-x$ to $t=0$ with the initial condition $f(120-x)=0$ we can use the point $(120-x, 0)$ as our starting point. The next step is to actually solve the outer model to approximate the next point. All the terms in the outer model's differential equation can be computed using analytical expressions except $S_{x+t}^d (t)$. This term can be calculated using the middle model and when it is computed the estimation of the next point is completed. The outer model equation is solved four times for each estimation of the next point, corresponding to calculating $k1$, $k2$, $k3$ and $k4$ in the Runge-Kutta method. This is repeated $\frac{120-x}{h}$ times until we reach the final point $(0,y)$. \\
 	
