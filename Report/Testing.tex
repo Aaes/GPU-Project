@@ -55,9 +55,6 @@ The difference between the C and CUDA implementations is found within the inner 
 
 The difference between the two CUDA programs, MiddlePar and OuterPar, is produced by the way OuterPar reuse previously estimated results. The different results occur in the \texttt{OuterRK} function of our implementation. The Runge-Kutta method in OuterRK gets an $x$-value as a parameter and calculates $k1$ through $k4$ using $x$, $x+\frac{stepsize}{2}$ and $x+stepsize$. Consider the input where $x = 40$ and $stepsize = 0.2$. The parameters for the $k$ estimations would be $40$, $40.9$ and $40.8$. The next call to \texttt{OuterRK} gets $40.8$ as input and produces $40.7$ and $40.8$ to calculate the different $k$-values. In the first iteration, both CUDA programs produce the same $x$-value to estimate $k$. However, in the next iteration, MiddlePar produces $40.79$ as the initial value. \\
 
-NIKLAS
-Since the initial $x$-value in the next iteration is the same as the last $x$ calculated in the previous call to \texttt{OuterRK}. \\
-
 To the OuterPar implementation, this is the exact same $x$-value and will retrieve the same result in both situations from the temporary array calculated by the kernel. However, these two different inputs do not produce the same value in the middle model and thus the estimation done i OuterRK in MiddlePar and OuterPar does not match.\\
 
 Altogether, these three issues explain how we can have four different implementations that produce different results. The question remains which result is the right one. In this project we were given a single result from Edlund based on the input $g=10$, $r=65$, $x=35$ and $10$ steps per year. It is assumed that the result from Edlund is fairly accurate. The comparison with our results are shown in Table \ref{table:precision}.
