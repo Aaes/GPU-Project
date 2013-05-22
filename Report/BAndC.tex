@@ -10,9 +10,9 @@ The number of steps in the outer model is solved from $120-x$ to 0 the $x$-value
 
 It is important to show that our solution is fast no matter what values are chosen. Changing $g$ and $r$ will have no performance effect and is therefore not included in the tests.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \begin{center}
-	\includegraphics[width=\textwidth]{img/Gpulab-varx35.png}
+	\includegraphics[scale=0.5]{img/Gpulab-varx35.png}
 \end{center}
 \caption{The impact of changing the $x$ value on the Gpulab06 machine}
 \label{variablex}
@@ -23,26 +23,27 @@ When the $x$ value rises the runtime naturally increases because the outer model
 \subsection{Variable Stepsize}
 One of the advantages of using a 4th order Runge-Kutta solver is that an appropiate number of steps per year can be chosen to adjust the precision at the cost of an increase in running time. While increasing the steps per year will increase the running time in our implementation the increase is quite small compared to the C and C\# implementations.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \begin{center}
-	\includegraphics[width=\textwidth]{img/Gpulab-stepsize35.png}
+	\includegraphics[scale=0.5]{img/Gpulab-stepsize35.png}
 \end{center}
 \caption{The impact of changing the stepsize on the Gpulab06 machine}
 \label{variablestepsize}
 \end{figure}
-
+\FloatBarrier
 Increasing the number of steps per year does increase the running time as expected but our OuterPar solution is superior in every test we performed on all the machines. The results showed up to 680 times faster running times compared to the original C\# implementation.
 
 \subsection{Variable Threads per Block}
 Since the number of threads per block is set at compile time in the CUDA implementations it is interesting to test what impact different amounts have on the performance.
 
-\begin{figure}[ht!]
+\begin{figure}[t]
 \begin{center}
-	\includegraphics[width=\textwidth]{img/Gpulab-tpb35.png}
+	\includegraphics[scale=0.5]{img/Gpulab-tpb35.png}
 \end{center}
 \caption{The impact of changing the threads per block on the Gpulab06 machine}
 \label{ThreadsPerBlockGraph}
 \end{figure}
+\FloatBarrier
 
 \noindent As seen in Fig. \ref{ThreadsPerBlockGraph}, the slowest configuration is 512 threads per block. This is expected since the Gpulab06 GPU has a hardware limit of 2048 threads per SMP meaning that it schedules (2048 / 512) = 4 blocks at a time even though the hardware can schedule as many as 16. To increase performance, the amount of threads per block has to be lowered to yield more blocks and thus a better utilization of the SMPs. This fact explains the drastic improvement from 512 to 256 and from 256 til 128, at which the number of blocks reaches the exact hardware limit. Lowering the count further to 64 threads per block, however, seems to keep improving performance even though we already reached 16 blocks. \\
 

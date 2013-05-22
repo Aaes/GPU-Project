@@ -65,6 +65,7 @@ The execution flow of the MiddlePar implementation is shown in Fig. \ref{fig:mid
   \caption{Execution flow: MiddlePar implementation}
   \label{fig:middleparexec}
 \end{figure}
+\FloatBarrier
 
 \subsubsection{MiddlePar Memory Considerations} \hfill \\
 This implementation frequently accesses the number of steps per year when calculating \texttt{Inner}. Since we only read this constant, it makes sense to place this variable in constant memory. Constant memory is considerably faster than global memory \cite{bpg} because it has it's own cache, with the limitation that you cannot alter the data.\\
@@ -172,6 +173,7 @@ The execution flow of the MiddlePar implementation is shown in Fig. \ref{fig:out
   \caption{Execution flow: OuterPar implementation}
   \label{fig:outerparexec}
 \end{figure}
+\FloatBarrier
 
 \subsubsection{OuterPar Memory Considerations} \hfill \\
 Just like the MiddlePar implementation, this implementation frequently accesses a constant variables when calculating \texttt{Inner}, but for this implementation it also accesses the constants $x$, $h$ and $level2fullsteps$, holding the number of fullsteps in \texttt{Middle}. Since we only read these constants we kept them in constant memory.\\
