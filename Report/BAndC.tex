@@ -10,7 +10,7 @@ The number of steps in the outer model is solved from $120-x$ to 0 the $x$-value
 
 It is important to show that our solution is fast no matter what values are chosen. Changing $g$ and $r$ will have no performance effect and is therefore not included in the tests.
 
-\begin{figure}
+\begin{figure}[ht!]
 \begin{center}
 	\includegraphics[width=\textwidth]{img/Gpulab-varx35.png}
 \end{center}
@@ -23,7 +23,7 @@ When the $x$ value rises the runtime naturally increases because the outer model
 \subsection{Variable Stepsize}
 One of the advantages of using a 4th order Runge-Kutta solver is that an appropiate number of steps per year can be chosen to adjust the precision at the cost of an increase in running time. While increasing the steps per year will increase the running time in our implementation the increase is quite small compared to the C and C\# implementations.
 
-\begin{figure}
+\begin{figure}[ht!]
 \begin{center}
 	\includegraphics[width=\textwidth]{img/Gpulab-stepsize35.png}
 \end{center}
@@ -36,7 +36,7 @@ Increasing the number of steps per year does increase the running time as expect
 \subsection{Variable Threads per Block}
 Since the number of threads per block is set at compile time in the CUDA implementations it is interesting to test what impact different amounts have on the performance.
 
-\begin{figure}
+\begin{figure}[ht!]
 \begin{center}
 	\includegraphics[width=\textwidth]{img/Gpulab-tpb35.png}
 \end{center}

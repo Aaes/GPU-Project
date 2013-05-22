@@ -142,7 +142,7 @@ Reduction seems like the most obvious choice, however, the size of the array and
 
 Once the sum has been calculated it is stored in a temporary array holding the sum from each block. Once all blocks have computed their sum, the kernel terminates and the temporary array is copied back to the CPU. When \texttt{OuterRK} is called, instead of calling \texttt{Middle} it indexes into temporary array. The code for calculating the initial \texttt{outerx} array for the kernel is shown in Fig. \ref{fig:outerparcpu}.
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
 \begin{lstlisting}[language=c]
 //Prepare an array of all possible x values
 int stp = 0;
@@ -183,6 +183,7 @@ However compared to the MiddlePar solution \texttt{kSum} was now kept in shared 
 \label{sec:profiler}
 
 We used Nvidias Visual Profiler to analyse the MiddlePar and OuterPar implementation. We present the results in Table \ref{table:profiler} and discuss them in the next section.
+
 \begin{savenotes}
 \begin{table}  
 \begin{center}

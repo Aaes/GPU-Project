@@ -28,10 +28,11 @@ All threads within the same warp share the same execution path at any given time
 \subsection{Memory}
 A CUDA device exposes different kinds of memory with each their latency and access scope. Since latency has a direct influence on performance, considering which types of memory is used in a CUDA program is important to utilize the full performance potential. Besides latency issues, blocks in an SMP might use more shared memory than is available in which case the number of blocks will be automatically reduced, thus affecting the overall performance of the program. \\
 
-\begin{figure}
-\centerline{\includegraphics[width=\textwidth]{img/latenstid.png}} 
-\caption{An overview of the different kinds of memory and their latencies}
-\label{memorylatencies}
+\begin{figure}[ht!]
+  \centering
+    \includegraphics[scale=0.15]{img/latenstid.png}
+  \caption{An overview of the different kinds of memory and their latencies}
+  \label{memorylatencies}
 \end{figure}
 
 The memory model in CUDA is shown in Fig. \ref{memorylatencies}. The figure shows a grid of threads divided into two blocks with two threads each. Memory types include constant memory, global memory, shared memory and thread registers. Global- and constant memory are the only memory types that can be accessed from the host. These are the places where the host can store data to be used in kernel code using CUDA functions similar to memory management functions from C. The kernel threads can then access the data directly using their block- and/or thread IDs. Constant memory is read only from the device, but is much faster to read from compared to global memory. The results from the kernel is written to global memory, since it is the only place the device can write to and the host can read from, where it can be copied back to the host.\\
